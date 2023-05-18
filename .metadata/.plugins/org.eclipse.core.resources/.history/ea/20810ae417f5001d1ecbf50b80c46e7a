@@ -1,0 +1,22 @@
+package com.vti.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class ResponseData {	
+	private ResponseType type;
+	private String message;
+	private String code;
+	private Object data;
+	
+
+}
+enum ResponseType {
+	INFO,WARINING,ERROR;
+}

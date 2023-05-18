@@ -1,0 +1,18 @@
+package com.vti.controller;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.vti.controller.FeignClientConfig;
+
+@FeignClient(name = "navitime",configuration = FeignClientConfig.class)
+public interface NavitimeApiConnect {
+	
+	@GetMapping("/route_transit")
+	public ResponseEntity<String> getTrainFare(@RequestParam("start") String start,
+			@RequestParam("goal") String goal, 
+			@RequestParam("start_time") String time);
+
+}

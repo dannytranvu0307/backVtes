@@ -1,0 +1,21 @@
+package com.vti.repository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.vti.entity.Account;
+import com.vti.repository.AccountRepository;
+
+@Service
+public class AccountService {
+
+	@Autowired
+	private AccountRepository userRepository;
+	
+	public Account findAccountByEmail(String email) {
+		return userRepository.findByEmail(email);
+	}
+	public Account saveAccount(Account user) {
+		return userRepository.save(user);
+	}
+}

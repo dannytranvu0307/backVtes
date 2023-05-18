@@ -1,0 +1,28 @@
+package com.vti.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import com.vti.entity.Account;
+import com.vti.repository.AccountService;
+
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
+
+	@Autowired
+	private AccountService service;
+
+	@Override
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		Account account = service.findAccountByEmail(email);
+		System.out.println(account.toString());
+		if (account == null) {
+			throw new UsernameNotFoundException("Not found user :" + email);
+		}
+		return new UserDetailsImpl(account);
+	}
+
+}

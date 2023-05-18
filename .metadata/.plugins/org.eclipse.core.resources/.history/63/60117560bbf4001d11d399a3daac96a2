@@ -1,0 +1,18 @@
+server.port= 8080
+
+
+vtes.app.jwtExpirationMs=7200000
+
+spring.datasource.url=jdbc:mysql://localhost:3306/vtes
+spring.datasource.password=AdminDef
+spring.datasource.username=root
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+
+spring.cloud.openfeign.client.config.navitime.url=https://navitime-route-totalnavi.p.rapidapi.com
+feign.client.api.key=2516f33c9dmshbc0da503916a548p195a7djsn341e1f916f12
