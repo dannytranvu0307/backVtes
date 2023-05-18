@@ -1,0 +1,33 @@
+package com.vti.controller;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import feign.RequestInterceptor;
+import feign.RequestTemplate;
+
+@Configuration
+public class FeignClientConfig {
+    private String apiKey = "2516f33c9dmshbc0da503916a548p195a7djsn341e1f916f12";
+
+    @Bean
+    public RequestInterceptor requestInterceptor() {
+        return new FeignClientInterceptor(apiKey);
+    }
+
+    private static class FeignClientInterceptor implements RequestInterceptor {
+
+        private final String apiKey;
+
+        public FeignClientInterceptor(String apiKey) {
+            this.apiKey = apiKey;
+        }
+
+        @Override
+        public void apply(RequestTemplate requestTemplate) {
+            requestTemplate.header("X-RapidAPI-Key", apiKey);
+            
+        }
+    }
+}
+

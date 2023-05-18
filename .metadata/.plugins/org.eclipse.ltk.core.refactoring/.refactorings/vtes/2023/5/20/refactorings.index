@@ -1,0 +1,19 @@
+1684330109359	Rename type 'User'
+1684331455421	Rename local variable 'savedUser'
+1684331767244	Rename type 'JwtTokenProvider'
+1684332458363	Rename method 'generateToken'
+1684332802743	Rename method 'parseJwt'
+1684332875990	Rename type 'UserRepository'
+1684333529769	Rename local variable 'fullName'
+1684334639776	Rename type 'ResponeData'
+1684334796600	Rename type 'ResponseMessage'
+1684371306298	Rename type 'MessageResponse'
+1684372507540	Rename type 'UserServiceTest'
+1684375169739	Rename package 'com.vti.api'
+1684375200625	Rename package 'com.vti'
+1684375244375	Move compilation unit
+1684375251897	Move compilation unit
+1684375273144	Move compilation unit
+1684375371384	Move compilation unit
+1684375391607	Move compilation unit
+1684376380393	Delete element

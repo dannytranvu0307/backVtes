@@ -1,0 +1,20 @@
+package com.vti.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class MessageResponse {
+	static enum ResponseType {
+		INFO,WARINING,ERROR;
+	}
+	
+	private ResponeType type;
+	private String message;
+	private String code;
+	
+
+}

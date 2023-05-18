@@ -1,0 +1,37 @@
+package com.vti.entity;
+
+import java.sql.Date;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Table(name = "tbl_refresh_token")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class RefreshToken {
+	@Id
+	@Column(name = "ID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
+	
+	@Column(name = "ACCOUNT_ID")
+	@ManyToOne
+	private Account account;
+	@Column(name="TOKEN")
+	private String token;
+	
+	@Column(name ="CREATE_TIME")
+	private Date createTimeDate;
+	
+	@Column(name ="UPDATE_TIME")
+	private Date updateTimeDate;
+	
+}
