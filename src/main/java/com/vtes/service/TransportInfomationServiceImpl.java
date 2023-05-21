@@ -4,11 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -22,6 +21,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vtes.model.navitime.CommuterPassDetail;
+import com.vtes.model.navitime.Link;
 import com.vtes.model.navitime.Route;
 import com.vtes.model.navitime.RouteSectionItem;
 import com.vtes.model.navitime.RouteSummary;
@@ -91,65 +91,108 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 		return convertCommuterPass(routes);
 		
 	}
-
 	private List<CommuterPassDetail> convertCommuterPass(List<Route> routes) {
-		AtomicInteger counter = new AtomicInteger(1);
-		List<CommuterPassDetail> cpDetails = routes.stream().map(route -> {
-			CommuterPassDetail cp = new CommuterPassDetail();
+		List<CommuterPassDetail> cpDetails = routes.parallelStream()
+	            .map(route -> {
+	                CommuterPassDetail cp = new CommuterPassDetail();
 
-			RouteSummary summary = route.getSummary();
-			cp.setStart(summary.getStart());
-			cp.setGoal(summary.getGoal());
-			cp.setNo(counter.getAndIncrement());
-			
-			
-			Set<String> viaStations = new HashSet<>();
-			List<String> symbols = new ArrayList<String>();
-			int index = 0;
-			List<RouteSectionItem> sections = route.getSections();
-			for (int i = 0; i< sections.size(); i++) {	
-				RouteSectionItem sc = sections.get(i);
-				if(sc.getType().equals("point")) {
-					viaStations.add(sc.getName());
-					if(index % 2 == 0) {
-						if (sc.getNumbering().getDeparture().size() == 1) {
-							symbols.add(sc.getNumbering().getDeparture().get(1).getSymbol());	
-						}						
-					}else
-					if (sc.getNumbering().getArrival().size() == 1) {
-						symbols.add(sc.getNumbering().getArrival().get(1).getSymbol());
-					}
-				}
-			}
-			cp.setViaStations(viaStations);
-			List<SubRoute> subRoutes = route.getSections().stream().map(sc -> {
-				SubRoute subRoute = new SubRoute();
-				if ("move".equals(sc.getType()) && sc.getTransport() != null) {
-					subRoute.setLineColor(sc.getTransport().getLineColor());
+	                RouteSummary summary = route.getSummary();
+	                cp.setStart(summary.getStart());
+	                cp.setGoal(summary.getGoal());
 
-					List<String> linkJson = Optional.ofNullable(sc.getTransport().getLinks()).map(
-							links -> links.stream().map(link -> link.generateViaJson()).collect(Collectors.toList()))
-							.orElse(Collections.emptyList());
+	                Set<String> viaStations = route.getSections().parallelStream()
+	                        .filter(sc -> "point".equals(sc.getType()))
+	                        .map(RouteSectionItem::getName)
+	                        .filter(Objects::nonNull)
+	                        .collect(Collectors.toSet());
+	                cp.setViaStations(viaStations);
 
-					subRoute.setLinks(linkJson);
-				}
-				return subRoute;
-			}).collect(Collectors.toList());
-			List<SubRoute> filteredSubRoutes = new ArrayList<>();
-			for(int i = 0 ; i < subRoutes.size(); i++) {
-				SubRoute rt = subRoutes.get(i);
-				if(rt.getLinks() != null) {
-					rt.setLineSymbol(symbols.get(i));
-					filteredSubRoutes.add(rt);
-				}
-			}
-			
-			cp.setViaRoutes(filteredSubRoutes);
+	                List<SubRoute> subRoutes = route.getSections().parallelStream()
+	                        .filter(sc -> "move".equals(sc.getType()) && sc.getTransport() != null)
+	                        .map(sc -> {
+	                            SubRoute subRoute = new SubRoute();
+	                            subRoute.setLineColor(sc.getTransport().getLineColor());
 
-			return cp;
-		}).collect(Collectors.toList());
+	                            List<String> linkJson = Optional.ofNullable(sc.getTransport().getLinks())
+	                                    .map(links -> links.parallelStream()
+	                                            .map(Link::generateViaJson)
+	                                            .collect(Collectors.toList()))
+	                                    .orElse(Collections.emptyList());
+
+	                            subRoute.setLinks(linkJson);
+	                            return subRoute;
+	                        })
+	                        .collect(Collectors.toList());
+	                cp.setViaRoutes(subRoutes);
+
+	                return cp;
+	            })
+	            .collect(Collectors.toList());
+
+	    return cpDetails;
 		
-		return cpDetails;
 	}
+	
+
+//	private List<CommuterPassDetail> convertCommuterPass(List<Route> routes) {
+//		AtomicInteger counter = new AtomicInteger(1);
+//		List<CommuterPassDetail> cpDetails = routes.stream().map(route -> {
+//			CommuterPassDetail cp = new CommuterPassDetail();
+//
+//			RouteSummary summary = route.getSummary();
+//			cp.setStart(summary.getStart());
+//			cp.setGoal(summary.getGoal());
+//			cp.setNo(counter.getAndIncrement());
+//			
+//			
+//			Set<String> viaStations = new HashSet<>();
+//			List<String> symbols = new ArrayList<String>();
+//			int index = 0;
+//			List<RouteSectionItem> sections = route.getSections();
+//			for (int i = 0; i< sections.size(); i++) {	
+//				RouteSectionItem sc = sections.get(i);
+//				if(sc.getType().equals("point")) {
+//					viaStations.add(sc.getName());
+//					if(index % 2 == 0) {
+//						if (sc.getNumbering().getDeparture().size() == 1) {
+//							symbols.add(sc.getNumbering().getDeparture().get(1).getSymbol());	
+//						}						
+//					}else
+//					if (sc.getNumbering().getArrival().size() == 1) {
+//						symbols.add(sc.getNumbering().getArrival().get(1).getSymbol());
+//					}
+//				}
+//			}
+//			cp.setViaStations(viaStations);
+//			List<SubRoute> subRoutes = route.getSections().stream().map(sc -> {
+//				SubRoute subRoute = new SubRoute();
+//				if ("move".equals(sc.getType()) && sc.getTransport() != null) {
+//					subRoute.setLineColor(sc.getTransport().getLineColor());
+//
+//					List<String> linkJson = Optional.ofNullable(sc.getTransport().getLinks()).map(
+//							links -> links.stream().map(link -> link.generateViaJson()).collect(Collectors.toList()))
+//							.orElse(Collections.emptyList());
+//
+//					subRoute.setLinks(linkJson);
+//				}
+//				return subRoute;
+//			}).collect(Collectors.toList());
+//			List<SubRoute> filteredSubRoutes = new ArrayList<>();
+//			for(int i = 0 ; i < subRoutes.size(); i++) {
+//				SubRoute rt = subRoutes.get(i);
+//				if(rt.getLinks() != null) {
+//					rt.setLineSymbol(symbols.get(i));
+//					filteredSubRoutes.add(rt);
+//				}
+//			}
+//			
+//			cp.setViaRoutes(filteredSubRoutes);
+//
+//			return cp;
+//		}).collect(Collectors.toList());
+//		
+//		return cpDetails;
+//	}
+	
 
 }

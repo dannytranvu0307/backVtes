@@ -3,6 +3,7 @@ package com.vtes.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import com.vtes.model.ResponseData.ResponseType;
 import com.vtes.model.navitime.CommuterPassDetail;
 import com.vtes.model.navitime.Route;
 import com.vtes.model.navitime.Station;
+import com.vtes.repository.CommuterPassRepo;
 import com.vtes.service.TransportInfomationServiceImpl;
 
 @RestController
@@ -24,11 +26,15 @@ public class TransportAPIController {
 	@Autowired
 	private TransportInfomationServiceImpl transportService;
 	
+	@Autowired
+	private CommuterPassRepo repo;
+	
 	@GetMapping("/routes")
 	public ResponseEntity<?> getRouteDetails(
 			@RequestParam(name="start",required = true) String start,
 			@RequestParam(name = "goal",required = true) String goal,
-			@RequestParam(name = "commuterPass", required = false) boolean active) 
+			@RequestParam(name = "commuterPass", required = false) boolean active,
+			HttpRequest request) 
 			throws ParameterInvalidException{
 		if(active) {
 			//Xu li cua Truong hop dung ve thang 
