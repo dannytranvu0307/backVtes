@@ -1,4 +1,4 @@
-package com.vti.entity;
+package com.vtes.entity;
 
 public class CommuterPass {
 
