@@ -1,6 +1,7 @@
 package com.vtes.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.vtes.model.navitime.CommuterPassDetail;
 import com.vtes.model.navitime.Route;
@@ -11,11 +12,11 @@ import com.vtes.model.navitime.Station;
  * */
 public interface TransportInfomationService {
 	
-	public List<Route> searchRoutes(String start, String goal);
+	public List<Route> searchRoutes(Map<String, Object> params);
 	
 	public List<Station> searchStationsByWord(String word);
 	
-	public List<CommuterPassDetail> searchCommuterPassDetail(String start, String goal);
+	public List<CommuterPassDetail> searchCommuterPassDetail(Map<String, Object> params);
 
 
 }

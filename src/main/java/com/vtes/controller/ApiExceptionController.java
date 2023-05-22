@@ -2,6 +2,7 @@ package com.vtes.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.vtes.exception.BadRequestException;
+import com.vtes.exception.FareNotFoundException;
 import com.vtes.exception.ParameterInvalidException;
 import com.vtes.model.ResponseData;
 import com.vtes.model.ResponseData.ResponseType;
@@ -45,6 +47,16 @@ public class ApiExceptionController {
 		return ResponseData.builder()
 				.code("API_ER02")
 				.message(ex.getMessage())
+				.type(ResponseType.ERROR)
+				.build();
+		
+	}
+	@ExceptionHandler(FareNotFoundException.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	public ResponseData fareNotFoundException(FareNotFoundException ex) {
+		return ResponseData.builder()
+				.code("API010_ER")
+				.message("Not found fare record")
 				.type(ResponseType.ERROR)
 				.build();
 		

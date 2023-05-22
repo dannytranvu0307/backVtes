@@ -11,11 +11,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "USER")
+@Table(name = "tbl_user")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 	
 	@Id
@@ -28,6 +32,12 @@ public class User {
 	
 	@OneToMany(mappedBy = "user")
 	private Set<Fare> fares;
+
+	public User(Integer id) {
+		super();
+		this.id = id;
+	}
+	
 	
 	
 }

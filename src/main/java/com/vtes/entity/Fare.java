@@ -13,11 +13,19 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "tbl_fare")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Fare {
 	@Id
 	@Column(name ="ID")
@@ -54,13 +62,22 @@ public class Fare {
 	
 	@Column(name = "VISIT_DT")
 	@Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(pattern = "yyyy/MM/dd")
 	private Date visitDate;
 	
 	@Column(name = "CREATE_DT")
 	@Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(pattern = "yyyy/MM/dd")
 	private Date createDate;
 	
 	@Column(name = "DELETE_FLAG")
 	private Boolean deleteFlag;
+
+	public Fare(Integer id) {
+		super();
+		this.id = id;
+	}
+	
+	
 
 }

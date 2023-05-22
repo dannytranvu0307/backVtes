@@ -13,11 +13,15 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "tbl_commuter_pass")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommuterPass {
 
 	@Id

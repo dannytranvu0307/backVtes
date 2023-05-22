@@ -1,12 +1,15 @@
-package com.vtes.exception;
+package com.vtes.repository;
 
-public class BadRequestException extends RuntimeException {
-
+public class CommuterPassNotFound extends Exception{
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
-	
 	private String msg;
+	
+	
 
-	public BadRequestException(String msg) {
+	public CommuterPassNotFound(String msg) {
 		super();
 		this.msg = msg;
 	}

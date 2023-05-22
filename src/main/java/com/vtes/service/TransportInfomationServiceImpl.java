@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -41,14 +42,17 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	public List<Route> searchRoutes(String start, String goal) {
+	public List<Route> searchRoutes(Map<String, Object> params) {
 		List<Route> items = null;
 		Date currentDate = new Date();
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		String formattedDateTime = sdf.format(currentDate);
+		
+		params.put("start_time", formattedDateTime);
+		
 
-		ResponseEntity<String> json = totalnavi.getTrainFare(start, goal, formattedDateTime);
+		ResponseEntity<String> json = totalnavi.searchRoutes(params);
 		String jsonString = json.getBody();
 
 		try {
@@ -86,11 +90,19 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 		return stations;
 	}
 
-	public List<CommuterPassDetail> searchCommuterPassDetail(String start, String goal) {
-		List<Route> routes = searchRoutes(start, goal);
+	public List<CommuterPassDetail> searchCommuterPassDetail(Map<String, Object> params) {
+		List<Route> routes = searchRoutes(params);
 		return convertCommuterPass(routes);
 		
 	}
+	
+	private boolean validateParameter(String start, String goal) {
+		if(start == "" && goal == "") {
+			return true;
+		}
+		return false;
+	}
+	
 	private List<CommuterPassDetail> convertCommuterPass(List<Route> routes) {
 		List<CommuterPassDetail> cpDetails = routes.parallelStream()
 	            .map(route -> {
@@ -132,6 +144,7 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 	    return cpDetails;
 		
 	}
+
 	
 
 //	private List<CommuterPassDetail> convertCommuterPass(List<Route> routes) {
