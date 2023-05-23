@@ -144,7 +144,7 @@ public class AuthController {
 					cookieAccessToken.setHttpOnly(true);
 					cookieAccessToken.setMaxAge(6000);
 					cookieAccessToken.setSecure(false);
-					cookieAccessToken.setPath("/");
+					cookieAccessToken.setPath("/api/v1/auth");
 					res.addCookie(cookieAccessToken);
 					return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
 				})
