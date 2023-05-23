@@ -11,13 +11,6 @@ import com.vtes.config.FeignClientConfig;
 
 @FeignClient(name = "navitime-totalnavi",url = "https://navitime-route-totalnavi.p.rapidapi.com",configuration = FeignClientConfig.class)
 public interface TotalNaviApiConnect {
-	
-//	@GetMapping("/route_transit")
-//	public ResponseEntity<String> searchRoutes(@RequestParam("start") String start,
-//			@RequestParam(name = "goal", required =  true) String goal, 
-//			@RequestParam(name = "start_time",required =  true) String time,
-//			@RequestParam(name = "commuter_pass", required =  false) String[] commuterPass);
-	
 	@GetMapping("/route_transit")
 	public ResponseEntity<String> searchRoutes(@RequestParam Map<String, Object> params);
 }

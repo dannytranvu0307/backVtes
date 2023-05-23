@@ -40,7 +40,7 @@ public class User {
 	@JoinColumn(name = "DEPARTMENT_ID", referencedColumnName = "ID")
 	private Department department;
 	
-	@OneToOne(mappedBy = "user")
+	@OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
 	private CommuterPass commuterPass;
 	
 	@OneToMany(mappedBy = "user")

@@ -1,4 +1,4 @@
-package com.vtes.model.navitime;
+ package com.vtes.model.navitime;
 
 import java.util.List;
 import java.util.Set;

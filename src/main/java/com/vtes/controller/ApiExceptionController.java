@@ -33,6 +33,17 @@ public class ApiExceptionController {
 		
 	}
 	
+	@ExceptionHandler(IllegalArgumentException.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	public ResponseData methodArgumentTypeMissmatch(Exception ex) {
+		return ResponseData.builder()
+				.code("400")
+				.message(ex.getMessage())
+				.type(ResponseType.ERROR)
+				.build();
+		
+	}
+	
 	@ExceptionHandler(ParameterInvalidException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public ResponseData invalidParamExResponse(Exception ex) {
@@ -79,7 +90,7 @@ public class ApiExceptionController {
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public ResponseData notFoundResource(EntityNotFoundException ex) {
 		return ResponseData.builder()
-				.code("API006_ER")
+				.code("404")
 				.message(ex.getMessage())
 				.type(ResponseType.ERROR)
 				.build();
@@ -89,7 +100,7 @@ public class ApiExceptionController {
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public ResponseData notFoundCommuterPass(Exception ex) {
 		return ResponseData.builder()
-				.code("API006_ER")
+				.code("API008_ER")
 				.message(ex.getMessage())
 				.type(ResponseType.ERROR)
 				.build();

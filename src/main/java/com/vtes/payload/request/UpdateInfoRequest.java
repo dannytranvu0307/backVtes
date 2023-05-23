@@ -1,7 +1,8 @@
 package com.vtes.payload.request;
 
+import com.vtes.model.CommuterPassDTO;
+
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class UpdateInfoRequest {
@@ -13,5 +14,7 @@ public class UpdateInfoRequest {
 	private String newPassword;
 
 	private int departmentId;
+	
+	private CommuterPassDTO commuterPass;
 
 }
