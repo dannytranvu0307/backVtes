@@ -1,5 +1,6 @@
 package com.vtes.service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +9,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.vtes.entity.CommuterPass;
 import com.vtes.entity.Department;
 import com.vtes.entity.User;
+import com.vtes.exception.CommuterPassNotFound;
+import com.vtes.model.CommuterPassDTO;
 import com.vtes.payload.request.PasswordResetEmailRequest;
 import com.vtes.payload.request.PasswordResetRequest;
 import com.vtes.payload.request.UpdateInfoRequest;
 import com.vtes.payload.response.MessageResponse;
+import com.vtes.repository.CommuterPassRepo;
 import com.vtes.repository.DepartmentRepository;
 import com.vtes.repository.UserRepository;
 import com.vtes.sercurity.services.UserDetailsImpl;
@@ -26,6 +31,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private DepartmentRepository departmentRepository;
+
+	@Autowired
+	private CommuterPassRepo commuterPassRepo;
 
 	@Autowired
 	PasswordEncoder encoder;
@@ -51,41 +59,84 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public ResponseEntity<?> updateUser(UpdateInfoRequest updateInfoRequest, UserDetailsImpl userDetailsImpl) {
-		// TODO Auto-generated method stub
+	    User user = getUserByEmail(userDetailsImpl.getEmail());
 
-		User user = new User();
+	    if (!departmentExists(updateInfoRequest.getDepartmentId())) {
+	        return ResponseEntity.badRequest().body(new MessageResponse("Department does not exist!", "ERROR", "XXX"));
+	    }
 
-		user = userRepository.findByEmail(userDetailsImpl.getEmail()).get();
-		if (departmentRepository.findById(updateInfoRequest.getDepartmentId()).isEmpty()) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Department does not exits!", "ERROR", "XXX"));
-		}
+	    Department department = getDepartmentById(updateInfoRequest.getDepartmentId());
 
-		Department department = new Department();
-		department = departmentRepository.findById(updateInfoRequest.getDepartmentId()).get();
+	    if (updateInfoRequest.getPassword() == null) {
+	        updateUserInfoWithoutPassword(user, department, updateInfoRequest.getFullName());
+	    } else {
+	        if (!isPasswordValid(updateInfoRequest.getPassword(), user.getPassword())) {
+	            return ResponseEntity.badRequest().body(new MessageResponse("Invalid password!", "ERROR", "AE08"));
+	        }
+	        if (isSamePassword(updateInfoRequest.getPassword(), updateInfoRequest.getNewPassword())) {
+	            return ResponseEntity.badRequest().body(new MessageResponse(
+	                    "The new password cannot be the same as the old password!", "ERROR", "AE08"));
+	        }
 
-		if (updateInfoRequest.getPassword() == null) {
+	        updateUserPassword(user, updateInfoRequest.getPassword());
+	    }
 
-			user.setDepartment(department);
-			user.setFullName(updateInfoRequest.getFullName());
-		} else {
-			if (!encoder.matches(updateInfoRequest.getPassword(), user.getPassword())) {
-				return ResponseEntity.badRequest().body(new MessageResponse("Invalid password!", "ERROR", "AE08"));
-			}
-			if (updateInfoRequest.getPassword().equals(updateInfoRequest.getNewPassword())) {
-				return ResponseEntity.badRequest().body(new MessageResponse(
-						"The new password cannot be the same as the old password!", "ERROR", "AE08"));
-			}
+	    updateCommuterPass(user, userDetailsImpl.getId(), updateInfoRequest.getCommuterPass());
 
-			user.setDepartment(department);
-			user.setFullName(updateInfoRequest.getFullName());
-			user.setPassword(encoder.encode(updateInfoRequest.getPassword()));
-		}
+	    user.setDepartment(department);
+	    user.setFullName(updateInfoRequest.getFullName());
+	    userRepository.save(user);
 
-		userRepository.save(user);
-
-		return new ResponseEntity<>(new MessageResponse("Update Successfull", "INFO", "200"), HttpStatus.OK);
+	    return ResponseEntity.ok(new MessageResponse("Update Successful", "INFO", "200"));
 	}
 
+	private User getUserByEmail(String email) {
+	    return userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
+	}
+
+	private boolean departmentExists(Integer departmentId) {
+	    return departmentRepository.existsById(departmentId);
+	}
+
+	private Department getDepartmentById(Integer departmentId) {
+	    return departmentRepository.findById(departmentId)
+	            .orElseThrow(() -> new IllegalArgumentException("Department not found"));
+	}
+
+	private boolean isPasswordValid(String password, String encodedPassword) {
+	    return encoder.matches(password, encodedPassword);
+	}
+
+	private boolean isSamePassword(String password, String newPassword) {
+	    return password.equals(newPassword);
+	}
+
+	private void updateUserInfoWithoutPassword(User user, Department department, String fullName) {
+	    user.setDepartment(department);
+	    user.setFullName(fullName);
+	}
+
+	private void updateUserPassword(User user, String password) {
+	    user.setPassword(encoder.encode(password));
+	}
+
+	private void updateCommuterPass(User user, Integer userId, CommuterPassDTO commuterPassDTO) {
+	    if (commuterPassDTO != null) {
+	        String via = commuterPassDTO.getVia().toString();
+	        String viaDetail = commuterPassDTO.getViaDetail().toString();
+
+	        CommuterPass commuterPass = commuterPassRepo.findByUserId(userId).orElse(new CommuterPass());
+	        commuterPass.setDeparture(commuterPassDTO.getDeparture());
+	        commuterPass.setDestination(commuterPassDTO.getDestination());
+	        commuterPass.setVia(via);
+	        commuterPass.setViaDetail(viaDetail);
+
+	        commuterPass.setUser(new User(userId));
+	        user.setCommuterPass(commuterPass);
+	    }
+	}
+
+	
 	@Override
 	public User getUser(String email) {
 		// TODO Auto-generated method stub

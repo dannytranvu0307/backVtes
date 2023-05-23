@@ -14,6 +14,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -46,15 +48,18 @@ public class CommuterPass {
 	@Column(name = "VIA_DETAIL")
 	private String viaDetail;
 	
-	@Column(name = "CREATE_DT")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createDt;
-	
-	@Column(name="UPDATE_DT")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date updateDt;
-	
 	@Column(name = "DELETE_FLAG")
+	@ColumnDefault("false")
 	private Boolean deleteFlag;
+
+	public CommuterPass(String departure, String destination, String via, String viaDetail) {
+		super();
+		this.departure = departure;
+		this.destination = destination;
+		this.via = via;
+		this.viaDetail = viaDetail;
+	}
+	
+	
 
 }

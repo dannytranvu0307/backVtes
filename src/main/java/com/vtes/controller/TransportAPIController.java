@@ -62,12 +62,14 @@ public class TransportAPIController {
 			UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 			Integer userId = userDetails.getId();
 			try {
-				CommuterPass commuterPass = repo.findByUserId(userId);
+				CommuterPass commuterPass = repo.findByUserId(userId).get();
 				params.put("commuter_pass", commuterPass.getViaDetail());
 				routes = transportService.searchRoutes(params);
-			} catch (Exception e) {
-				LOGGER.warn("Not found commuter pass with user id {}",userId);
-				throw new CommuterPassNotFound(userId);
+			}catch (Exception e) {
+				if(e instanceof CommuterPassNotFound) {
+						LOGGER.warn("Not found commuter pass with user id {}",userId);
+						throw new CommuterPassNotFound(userId);
+				}
 			}
 			
 		}else {
