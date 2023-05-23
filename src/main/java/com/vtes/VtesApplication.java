@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan({"com.vtes","com.vtes.*"})
+@ComponentScan({ "com.vtes", "com.vtes.*" })
 @EnableFeignClients
 public class VtesApplication {
 
