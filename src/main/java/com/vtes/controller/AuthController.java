@@ -59,7 +59,7 @@ public class AuthController {
 	@Autowired
 	RefreshTokenService refreshTokenService;
 
-	@PostMapping("/signin")
+	@PostMapping("/login")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse res) {
 
 		Authentication authentication = authenticationManager.authenticate(
@@ -84,18 +84,21 @@ public class AuthController {
 			cookieAccessToken.setHttpOnly(true);
 			cookieAccessToken.setMaxAge(6000);
 			cookieAccessToken.setSecure(false);
+			cookieAccessToken.setPath("/");
 			res.addCookie(cookieAccessToken);
 
 			Cookie cookieRefreshToken = new Cookie("refreshToken", refreshToken.getToken());
 			cookieRefreshToken.setHttpOnly(true);
 			cookieRefreshToken.setMaxAge(60000);
 			cookieRefreshToken.setSecure(false);
+			cookieRefreshToken.setPath("/");
 			res.addCookie(cookieRefreshToken);
 		} else {
 			Cookie cookieAccessToken = new Cookie("accessToken", jwt);
 			cookieAccessToken.setHttpOnly(true);
 			cookieAccessToken.setMaxAge(6000);
 			cookieAccessToken.setSecure(false);
+			cookieAccessToken.setPath("/");
 			res.addCookie(cookieAccessToken);
 		}
 
@@ -133,14 +136,14 @@ public class AuthController {
 	@PostMapping("/refreshtoken")
 	public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request, HttpServletResponse res) {
 		String requestRefreshToken = request.getRefreshToken();
-
 		return refreshTokenService.findByToken(requestRefreshToken).map(refreshTokenService::verifyExpiration)
 				.map(RefreshToken::getUser).map(user -> {
-					String token = jwtUtils.generateTokenFromUsername(user.getFullName());
+					String token = jwtUtils.generateTokenFromUsername(user.getEmail());
 					Cookie cookieAccessToken = new Cookie("accessToken", token);
 					cookieAccessToken.setHttpOnly(true);
 					cookieAccessToken.setMaxAge(6000);
 					cookieAccessToken.setSecure(false);
+					cookieAccessToken.setPath("/");
 					res.addCookie(cookieAccessToken);
 					return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
 				})
