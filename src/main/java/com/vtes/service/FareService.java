@@ -32,8 +32,8 @@ public class FareService {
 		return repo.findAll();
 	}
 
-	public boolean isExistFare(Integer id) {
-		return repo.countById(id) > 0 ? true : false;
+	public boolean isExistFare(Integer userId,Integer recordId) {
+		return repo.findByIdAnhUserId(userId, recordId).isEmpty() ? false : true;
 	}
 
 	public FareDTO convertFromFare(Fare fare) {

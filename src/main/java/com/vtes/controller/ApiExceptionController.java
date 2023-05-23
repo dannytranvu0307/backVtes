@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.vtes.exception.BadRequestException;
+import com.vtes.exception.CommuterPassNotFound;
 import com.vtes.exception.FareNotFoundException;
 import com.vtes.exception.ParameterInvalidException;
 import com.vtes.model.ResponseData;
@@ -77,6 +78,16 @@ public class ApiExceptionController {
 	@ExceptionHandler(EntityNotFoundException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public ResponseData notFoundResource(EntityNotFoundException ex) {
+		return ResponseData.builder()
+				.code("API006_ER")
+				.message(ex.getMessage())
+				.type(ResponseType.ERROR)
+				.build();
+		
+	}
+	@ExceptionHandler(CommuterPassNotFound.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	public ResponseData notFoundCommuterPass(Exception ex) {
 		return ResponseData.builder()
 				.code("API006_ER")
 				.message(ex.getMessage())

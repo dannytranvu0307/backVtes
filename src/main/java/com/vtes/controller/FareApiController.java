@@ -6,11 +6,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +21,7 @@ import com.vtes.exception.FareNotFoundException;
 import com.vtes.model.FareDTO;
 import com.vtes.model.ResponseData;
 import com.vtes.model.ResponseData.ResponseType;
+import com.vtes.sercurity.services.UserDetailsImpl;
 import com.vtes.service.FareService;
 
 @RestController
@@ -32,14 +33,7 @@ public class FareApiController {
 
 	@PostMapping("/fares")
 	public ResponseEntity<?> saveFareRecord(@Valid @RequestBody FareDTO fareDTO, HttpServletRequest request) throws ParseException {
-
-		try {
-			//Get user id from request
-			Integer userId = 1;
-			fareDTO.setUserId(userId);
-		} catch (Exception e) {
-
-		}
+		fareDTO.setUserId(getAuthenticatedUserId());
 		FareDTO savedFare = fareService.saveFareRecord(fareDTO);
 		
 		return ResponseEntity.ok()
@@ -55,7 +49,9 @@ public class FareApiController {
 	@DeleteMapping(value = "/fares", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> deleteFareRecordById(
 			@RequestParam(name = "recordId",required = true) Integer recordId) throws FareNotFoundException {
-		if(!fareService.isExistFare(recordId))
+		Integer userId = getAuthenticatedUserId();
+
+		if(!fareService.isExistFare(userId,recordId))
 			throw new FareNotFoundException("Fare ID is not found");
 		
 			fareService.deleteFareRecord(recordId);
@@ -68,6 +64,13 @@ public class FareApiController {
 						
 
 		}
+	
+	private Integer getAuthenticatedUserId() {
+		// Get authenticated user from security context
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+		return userDetails.getId();
+	}
 	
 	
 }

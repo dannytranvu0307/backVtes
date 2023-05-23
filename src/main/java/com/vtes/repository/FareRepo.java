@@ -1,6 +1,7 @@
 package com.vtes.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,5 +18,7 @@ public interface FareRepo extends JpaRepository<Fare, Integer> {
 	void deleteById(Integer id);
 	
 	Fare save(Fare fare); 
-	Long countById(Integer id);
+	
+	@Query("select f from Fare f where f.user.id = ?1 and f.id = ?2")
+	Optional<Fare> findByIdAnhUserId(Integer userId, Integer recordId);
 }

@@ -1,29 +1,34 @@
 package com.vtes.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vtes.entity.CommuterPass;
+import com.vtes.exception.CommuterPassNotFound;
 import com.vtes.exception.ParameterInvalidException;
 import com.vtes.model.ResponseData;
 import com.vtes.model.ResponseData.ResponseType;
 import com.vtes.model.navitime.CommuterPassDetail;
+import com.vtes.model.navitime.Node;
 import com.vtes.model.navitime.Route;
 import com.vtes.model.navitime.Station;
-import com.vtes.repository.CommuterPassNotFound;
 import com.vtes.repository.CommuterPassRepo;
+import com.vtes.sercurity.services.UserDetailsImpl;
 import com.vtes.service.TransportInfomationServiceImpl;
 
 @RestController
@@ -37,30 +42,32 @@ public class TransportAPIController {
 	@Autowired
 	private CommuterPassRepo repo;
 	
-	@GetMapping("/routes")
+	@GetMapping(value = "/routes")
 	public ResponseEntity<?> getRouteDetails(
 			@RequestParam(name="start",required = true) String start,
 			@RequestParam(name = "goal",required = true) String goal,
-			@RequestParam(name = "commuterPass", required = false) boolean cpActive,
-			HttpServletRequest request) 
+			@RequestParam(name = "via",required = false) String[] via,
+			@RequestParam(name = "commuterPass", required = false) boolean cpActive) 
 			throws ParameterInvalidException, CommuterPassNotFound{
+
 		List<Route> routes = null;
 		Map<String, Object> params = new HashMap<>();
 		params.put("start", start);
 		params.put("goal", goal);
+		params.put("via", viaNodeJson(via));
+		
 		
 		if(cpActive) {
-			/*Get user id from request
-			 * Throw commuter pass is not exits exception
-			*/
-			Integer userId = 1;
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+			Integer userId = userDetails.getId();
 			try {
 				CommuterPass commuterPass = repo.findByUserId(userId);
 				params.put("commuter_pass", commuterPass.getViaDetail());
 				routes = transportService.searchRoutes(params);
 			} catch (Exception e) {
 				LOGGER.warn("Not found commuter pass with user id {}",userId);
-				throw new CommuterPassNotFound("User ID "+userId+" of commuter pass is not exist");
+				throw new CommuterPassNotFound(userId);
 			}
 			
 		}else {
@@ -79,7 +86,8 @@ public class TransportAPIController {
 	}
 	@GetMapping("/stations")
 	public ResponseEntity<?> getStationsByWord(
-			@RequestParam(name = "word", required = true) String word) throws ParameterInvalidException{
+			@RequestParam(name = "word", required = true) String word) 
+					throws ParameterInvalidException{
 		List<Station> stations = transportService.searchStationsByWord(word);
 		return ResponseEntity.ok().body(
 				ResponseData.builder()
@@ -113,5 +121,17 @@ public class TransportAPIController {
 				);
 		
 	}
-
+	private String viaNodeJson(String[] vias) {
+		if(vias == null) return null;
+		List<Node> nodes = new ArrayList<>();
+		for(int i = 0; i< vias.length ;i++) {
+			nodes.add(new Node(vias[i]));
+		}
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.writeValueAsString(nodes);
+		} catch (JsonProcessingException e) {
+		}
+		return null;
+	}
 }

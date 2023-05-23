@@ -1,8 +1,6 @@
 package com.vtes.sercurity.jwt;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +14,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vtes.model.ResponseData;
+import com.vtes.model.ResponseData.ResponseType;
 
 @Component
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
@@ -30,14 +30,13 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-		final Map<String, Object> body = new HashMap<>();
-		body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-		body.put("error", "Unauthorized");
-		body.put("message", authException.getMessage());
-		body.put("path", request.getServletPath());
+		ResponseData responseData = ResponseData.builder()
+				.type(ResponseType.ERROR)
+				.message(authException.getMessage())
+				.code("").build();
 
 		final ObjectMapper mapper = new ObjectMapper();
-		mapper.writeValue(response.getOutputStream(), body);
+		mapper.writeValue(response.getOutputStream(), responseData);
 	}
 
 }
