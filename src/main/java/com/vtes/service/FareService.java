@@ -2,6 +2,7 @@ package com.vtes.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,10 @@ public class FareService {
 
 	public void deleteFareRecord(Integer recordId) throws FareNotFoundException {
 		repo.deleteById(recordId);
+	}
+	
+	public List<Fare> findAll() {
+		return repo.findAll();
 	}
 
 	public boolean isExistFare(Integer id) {

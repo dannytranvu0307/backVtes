@@ -1,13 +1,15 @@
 package com.vtes.controller;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.vtes.exception.BadRequestException;
 import com.vtes.exception.FareNotFoundException;
@@ -57,8 +59,30 @@ public class ApiExceptionController {
 		return ResponseData.builder()
 				.code("API010_ER")
 				.message("Not found fare record")
+				.type(ResponseType.WARINING)
+				.build();
+		
+	}
+	
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	public ResponseData maxUploadSizeExceoption(Exception ex) {
+		return ResponseData.builder()
+				.code("API006_ER")
+				.message("This file size is too large")
 				.type(ResponseType.ERROR)
 				.build();
 		
 	}
+	@ExceptionHandler(EntityNotFoundException.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	public ResponseData notFoundResource(EntityNotFoundException ex) {
+		return ResponseData.builder()
+				.code("API006_ER")
+				.message(ex.getMessage())
+				.type(ResponseType.ERROR)
+				.build();
+		
+	}
+	
 }

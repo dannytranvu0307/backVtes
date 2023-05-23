@@ -16,10 +16,12 @@ import javax.persistence.TemporalType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "tbl_exported_file")
 @Data
+@NoArgsConstructor
 public class FileData {
 
 	@Id
@@ -34,8 +36,8 @@ public class FileData {
 	@Column(name = "FILE_NAME")
 	private String fileName;
 	
-	@Column(name = "FILE_CODE")
-	private String fileCode;
+	@Column(name = "FILE_PATH")
+	private String filePath;
 	
 	@Column(name = "EXPORTED_DT")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -44,4 +46,14 @@ public class FileData {
 	
 	@Column(name = "DELETE_FLAG")
 	private boolean deleteFlag;
+
+	public FileData(User user, String fileName, String fileCode, Date exportedDate) {
+		super();
+		this.user = user;
+		this.fileName = fileName;
+		this.filePath = fileCode;
+		this.exportedDate = exportedDate;
+	}
+	
+	
 }
