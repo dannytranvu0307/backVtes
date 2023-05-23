@@ -1,14 +1,14 @@
 package com.vtes.entity;
 
-import java.util.Set;
+import java.time.Instant;
+import java.util.List;
 
+import javax.persistence.*;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -18,26 +18,60 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "tbl_user")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
-	
+
 	@Id
-	@Column(name ="ID")
-	@GeneratedValue(strategy =GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID")
 	private Integer id;
+
+	@Column(name = "`FULL_NAME`")
+	private String fullName;
+
+	@Column(name = "`EMAIL`")
+	private String email;
+
+	@Column(name = "`PASSWORD`")
+	private String password;
+
+	@ManyToOne
+	@JoinColumn(name = "DEPARTMENT_ID", referencedColumnName = "ID")
+	private Department department;
 	
 	@OneToOne(mappedBy = "user")
 	private CommuterPass commuterPass;
 	
 	@OneToMany(mappedBy = "user")
-	private Set<Fare> fares;
+	private List<FileData> files;
+	
+	@OneToOne(mappedBy = "user")
+	private RefreshToken refreshToken;
 
+	@Column(name = "`STATUS`")
+	private Short status;
+
+	@Column(name = "`VERIFY_CODE`")
+	private String verifyCode;
+
+	@Column(name = "`CREATE_DT`")
+	private Instant createDt;
+
+	@Column(name = "`UPDATE_DT`")
+	private Instant updateDt;
+	
 	public User(Integer id) {
 		super();
 		this.id = id;
 	}
-	
-	
-	
+
+	public User(String fullName, String email, String password, Department department) {
+		super();
+		this.fullName = fullName;
+		this.email = email;
+		this.password = password;
+		this.department = department;
+	}
+
 }

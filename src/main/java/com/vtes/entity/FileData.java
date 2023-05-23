@@ -2,6 +2,7 @@ package com.vtes.entity;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,7 +30,7 @@ public class FileData {
 	@Column(name = "ID")
 	private Integer id;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "USER_ID",referencedColumnName = "ID")
 	private User user;
 	
@@ -54,6 +55,4 @@ public class FileData {
 		this.filePath = fileCode;
 		this.exportedDate = exportedDate;
 	}
-	
-	
 }

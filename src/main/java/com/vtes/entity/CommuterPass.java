@@ -1,3 +1,4 @@
+
 package com.vtes.entity;
 
 import java.util.Date;
@@ -55,4 +56,5 @@ public class CommuterPass {
 	
 	@Column(name = "DELETE_FLAG")
 	private Boolean deleteFlag;
+
 }

@@ -1,3 +1,4 @@
+
 package com.vtes.entity;
 
 import java.util.Date;
@@ -77,7 +78,5 @@ public class Fare {
 		super();
 		this.id = id;
 	}
-	
-	
 
 }
