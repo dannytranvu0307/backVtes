@@ -11,6 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -45,6 +48,10 @@ public class User {
 	
 	@OneToMany(mappedBy = "user")
 	private List<FileData> files;
+	
+	@OneToMany(mappedBy = "user")
+//	@JsonManagedReference
+	private List<Fare> fares;
 	
 	@OneToOne(mappedBy = "user")
 	private RefreshToken refreshToken;

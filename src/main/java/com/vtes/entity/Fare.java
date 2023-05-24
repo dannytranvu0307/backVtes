@@ -16,6 +16,9 @@ import javax.persistence.TemporalType;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,48 +32,48 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Fare {
 	@Id
-	@Column(name ="ID")
+	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "USER_ID")
+//	@JsonBackReference
 	private User user;
-	
+
 	@Column(name = "VISIT_LOCATION")
 	private String visitLocation;
-	
+
 	@Column(name = "DEPARTURE")
 	private String departure;
-	
+
 	@Column(name = "DESTINATION")
 	private String destination;
-	
+
 	@Column(name = "PAY_METHOD")
 	private Integer payMethod;
-	
+
 	@Column(name = "USE_CP")
 	private Boolean useCommuterPass;
-	
+
 	@Column(name = "ROUND_TRIP")
 	private Boolean isRoundTrip;
-	
+
 	@Column(name = "FEE")
 	private Integer fee;
-	
+
 	@Column(name = "TRANSPORTATION")
 	private Integer transportation;
-	
+
 	@Column(name = "VISIT_DT")
 	@Temporal(TemporalType.TIMESTAMP)
-	@DateTimeFormat(pattern = "yyyy/MM/dd")
 	private Date visitDate;
-	
+
 	@Column(name = "CREATE_DT")
 	@Temporal(TemporalType.TIMESTAMP)
 	@DateTimeFormat(pattern = "yyyy/MM/dd")
 	private Date createDate;
-	
+
 	@Column(name = "DELETE_FLAG")
 	private Boolean deleteFlag;
 

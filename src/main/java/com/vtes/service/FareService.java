@@ -37,7 +37,6 @@ public class FareService {
 	}
 
 	public FareDTO convertFromFare(Fare fare) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		return FareDTO.builder()
 				.id(fare.getId())
 				.userId(fare.getUser().getId())
@@ -49,7 +48,7 @@ public class FareService {
 				.commuterPass(fare.getUseCommuterPass())
 				.roundTrip(fare.getIsRoundTrip())
 				.transportation(fare.getTransportation())
-				.visitDate(dateFormat.format(fare.getVisitDate()))
+				.visitDate(fare.getVisitDate())
 				.build();
 
 	}
