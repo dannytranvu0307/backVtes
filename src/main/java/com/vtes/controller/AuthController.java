@@ -2,7 +2,7 @@ package com.vtes.controller;
 
 import java.util.UUID;
 
-import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -28,9 +28,9 @@ import com.vtes.payload.request.LoginRequest;
 import com.vtes.payload.request.SignupRequest;
 import com.vtes.payload.request.TokenRefreshRequest;
 import com.vtes.payload.response.MessageResponse;
-import com.vtes.payload.response.TokenRefreshResponse;
 import com.vtes.repository.DepartmentRepository;
 import com.vtes.repository.UserRepository;
+import com.vtes.sercurity.jwt.CookieUtils;
 import com.vtes.sercurity.jwt.JwtUtils;
 import com.vtes.sercurity.services.RefreshTokenService;
 import com.vtes.sercurity.services.UserDetailsImpl;
@@ -59,6 +59,9 @@ public class AuthController {
 	JwtUtils jwtUtils;
 
 	@Autowired
+	CookieUtils cookieUtils;
+
+	@Autowired
 	RefreshTokenService refreshTokenService;
 
 	@PostMapping("/login")
@@ -82,27 +85,10 @@ public class AuthController {
 
 		if (loginRequest.getRemember()) {
 			RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
-
-			Cookie cookieAccessToken = new Cookie("accessToken", jwt);
-			cookieAccessToken.setHttpOnly(true);
-			cookieAccessToken.setMaxAge(6000);
-			cookieAccessToken.setSecure(false);
-			cookieAccessToken.setPath("/");
-			httpServletResponse.addCookie(cookieAccessToken);
-
-			Cookie cookieRefreshToken = new Cookie("refreshToken", refreshToken.getToken());
-			cookieRefreshToken.setHttpOnly(true);
-			cookieRefreshToken.setMaxAge(60000);
-			cookieRefreshToken.setSecure(false);
-			cookieRefreshToken.setPath("/");
-			httpServletResponse.addCookie(cookieRefreshToken);
+			cookieUtils.createAccessTokenCookie(httpServletResponse, jwt);
+			cookieUtils.createRefreshTokenCookie(httpServletResponse, refreshToken.getToken());
 		} else {
-			Cookie cookieAccessToken = new Cookie("accessToken", jwt);
-			cookieAccessToken.setHttpOnly(true);
-			cookieAccessToken.setMaxAge(6000);
-			cookieAccessToken.setSecure(false);
-			cookieAccessToken.setPath("/");
-			httpServletResponse.addCookie(cookieAccessToken);
+			cookieUtils.createAccessTokenCookie(httpServletResponse, jwt);
 		}
 
 		return ResponseEntity.ok().body(new MessageResponse("Authentication successfull", "INFO", "200"));
@@ -129,7 +115,6 @@ public class AuthController {
 		user.setStatus((short) 0);
 		user.setVerifyCode(UUID.randomUUID().toString());
 		emailService.sendRegistrationUserConfirm(signUpRequest.getEmail(), user.getVerifyCode());
-
 		userRepository.save(user);
 
 		return ResponseEntity.ok().body(new MessageResponse("Register successful", "INFO", "200"));
@@ -142,27 +127,19 @@ public class AuthController {
 		return refreshTokenService.findByToken(requestRefreshToken).map(refreshTokenService::verifyExpiration)
 				.map(RefreshToken::getUser).map(user -> {
 					String token = jwtUtils.generateTokenFromUsername(user.getEmail());
-					Cookie cookieAccessToken = new Cookie("accessToken", token);
-					cookieAccessToken.setHttpOnly(true);
-					cookieAccessToken.setMaxAge(6000);
-					cookieAccessToken.setSecure(false);
-					cookieAccessToken.setPath("/api/v1/auth");
-					httpServletResponse.addCookie(cookieAccessToken);
-					return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
+					cookieUtils.createAccessTokenCookie(httpServletResponse, token);
+					return ResponseEntity.ok(new MessageResponse("Jwt Token recreated", "INFO", "200"));
 				})
 				.orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
 	}
 
 	@GetMapping("/logout")
-	public ResponseEntity<?> logoutUser(HttpServletResponse httpServletResponse) {
+	public ResponseEntity<?> logoutUser(HttpServletRequest httpServletRequest,
+			HttpServletResponse httpServletResponse) {
 		UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
 				.getPrincipal();
-		Cookie cookieAccessToken = new Cookie("accessToken", null);
-		cookieAccessToken.setHttpOnly(true);
-		cookieAccessToken.setMaxAge(6000);
-		cookieAccessToken.setSecure(false);
-		cookieAccessToken.setPath("/");
-		httpServletResponse.addCookie(cookieAccessToken);
+		cookieUtils.deleteCookie(httpServletRequest, httpServletResponse, "accessToken");
+		cookieUtils.deleteCookie(httpServletRequest, httpServletResponse, "refreshToken");
 		Integer userId = userDetails.getId();
 		refreshTokenService.deleteByUserId(userId);
 		return ResponseEntity.ok(new MessageResponse("Jwt Token deleted", "INFO", "200"));
