@@ -3,7 +3,6 @@ package com.vtes.controller;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,8 +19,9 @@ import com.vtes.entity.User;
 import com.vtes.payload.request.PasswordResetEmailRequest;
 import com.vtes.payload.request.PasswordResetRequest;
 import com.vtes.payload.request.UpdateInfoRequest;
-import com.vtes.payload.response.MessageWithDataResponse;
+import com.vtes.payload.response.ResponseData;
 import com.vtes.payload.response.UserResponse;
+import com.vtes.payload.response.ResponseData.ResponseType;
 import com.vtes.repository.DepartmentRepository;
 import com.vtes.repository.UserRepository;
 import com.vtes.sercurity.services.UserDetailsImpl;
@@ -62,7 +62,13 @@ public class UserController {
 
 		UserResponse userRespons = modelMapper.map(user, new TypeToken<UserResponse>() {
 		}.getType());
-		return new ResponseEntity<>(new MessageWithDataResponse("", "INFO", "200", userRespons), HttpStatus.OK);
+		return ResponseEntity.ok()
+				.body(ResponseData.builder()
+						.type(ResponseType.INFO)
+						.code("200")
+						.message("")
+						.data(userRespons)
+						.build());
 	}
 
 	@GetMapping("/active")

@@ -19,8 +19,8 @@ import com.vtes.exception.FareNotFoundException;
 import com.vtes.exception.ParameterInvalidException;
 import com.vtes.exception.TokenRefreshException;
 import com.vtes.exception.UploadFileException;
-import com.vtes.model.ResponseData;
-import com.vtes.model.ResponseData.ResponseType;
+import com.vtes.payload.response.ResponseData;
+import com.vtes.payload.response.ResponseData.ResponseType;
 
 @RestControllerAdvice
 public class ApiExceptionController {

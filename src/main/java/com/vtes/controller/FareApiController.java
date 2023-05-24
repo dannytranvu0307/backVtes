@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vtes.exception.FareNotFoundException;
 import com.vtes.model.FareDTO;
-import com.vtes.model.ResponseData;
-import com.vtes.model.ResponseData.ResponseType;
+import com.vtes.payload.response.ResponseData;
+import com.vtes.payload.response.ResponseData.ResponseType;
 import com.vtes.sercurity.services.UserDetailsImpl;
 import com.vtes.service.FareService;
 

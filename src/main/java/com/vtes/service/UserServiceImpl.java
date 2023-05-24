@@ -3,7 +3,6 @@ package com.vtes.service;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,13 +14,17 @@ import com.vtes.model.CommuterPassDTO;
 import com.vtes.payload.request.PasswordResetEmailRequest;
 import com.vtes.payload.request.PasswordResetRequest;
 import com.vtes.payload.request.UpdateInfoRequest;
-import com.vtes.payload.response.MessageResponse;
+import com.vtes.payload.response.ResponseData;
+import com.vtes.payload.response.ResponseData.ResponseType;
 import com.vtes.repository.CommuterPassRepo;
 import com.vtes.repository.DepartmentRepository;
 import com.vtes.repository.UserRepository;
 import com.vtes.sercurity.services.UserDetailsImpl;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
 	@Autowired
@@ -48,9 +51,23 @@ public class UserServiceImpl implements UserService {
 			user.setVerifyCode(null);
 			user.setStatus((short) 1);
 			userRepository.save(user);
-			return ResponseEntity.ok(new MessageResponse("Account verify successfully", "INFO", "200"));
+			
+			log.info("User {} of account is active",user.getFullName());
+			
+			return ResponseEntity.ok()
+					.body(ResponseData.builder()
+						.type(ResponseType.INFO)
+						.code("200")
+						.message("Account verify successfully")
+						.build());
 		} else {
-			return ResponseEntity.badRequest().body(new MessageResponse("Verify code incorrect", "ERROR", "API005_ER"));
+			return ResponseEntity.badRequest()
+					.body(ResponseData.builder()
+							.type(ResponseType.ERROR)
+							.code("API005_ER")
+							.message("Verify code incorrect")
+							.build()
+							);
 		}
 
 	}
@@ -60,7 +77,14 @@ public class UserServiceImpl implements UserService {
 	    User user = getUserByEmail(userDetailsImpl.getEmail());
 
 	    if (!departmentExists(updateInfoRequest.getDepartmentId())) {
-	        return ResponseEntity.badRequest().body(new MessageResponse("Department does not exist!", "ERROR", "XXX"));
+	    	log.debug("Bad request with department ID {}", updateInfoRequest.getDepartmentId());
+	    	
+	        return ResponseEntity.badRequest()
+	        		.body(ResponseData.builder()
+	        				.type(ResponseType.ERROR)
+	        				.code("API_ER02")
+	        				.message("Invalid parameter")
+	        				.build());
 	    }
 
 	    Department department = getDepartmentById(updateInfoRequest.getDepartmentId());
@@ -69,13 +93,17 @@ public class UserServiceImpl implements UserService {
 	        updateUserInfoWithoutPassword(user, department, updateInfoRequest.getFullName());
 	    } else {
 	        if (!isPasswordValid(updateInfoRequest.getPassword(), user.getPassword())) {
-	            return ResponseEntity.badRequest().body(new MessageResponse("Invalid password!", "ERROR", "AE08"));
+	        	
+	        	log.info("{} of entered password not match", user.getFullName());
+	        	
+	            return ResponseEntity.badRequest().body(
+	            		ResponseData.builder()
+	            		.type(ResponseType.ERROR)
+	            		.code("API_ER04")
+	            		.message("Password not match")
+	            		.build());
 	        }
-	        if (isSamePassword(updateInfoRequest.getPassword(), updateInfoRequest.getNewPassword())) {
-	            return ResponseEntity.badRequest().body(new MessageResponse(
-	                    "The new password cannot be the same as the old password!", "ERROR", "AE08"));
-	        }
-
+	       
 	        updateUserPassword(user, updateInfoRequest.getPassword());
 	    }
 
@@ -85,7 +113,12 @@ public class UserServiceImpl implements UserService {
 	    user.setFullName(updateInfoRequest.getFullName());
 	    userRepository.save(user);
 
-	    return ResponseEntity.ok(new MessageResponse("Update Successful", "INFO", "200"));
+	    return ResponseEntity.ok().body(
+	    		ResponseData.builder()
+	    		.type(ResponseType.INFO)
+	    		.code("200")
+	    		.message("Update successfull")
+	    		.build());
 	}
 
 	private User getUserByEmail(String email) {
@@ -103,10 +136,6 @@ public class UserServiceImpl implements UserService {
 
 	private boolean isPasswordValid(String password, String encodedPassword) {
 	    return encoder.matches(password, encodedPassword);
-	}
-
-	private boolean isSamePassword(String password, String newPassword) {
-	    return password.equals(newPassword);
 	}
 
 	private void updateUserInfoWithoutPassword(User user, Department department, String fullName) {
@@ -136,15 +165,22 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public User getUser(String email) {
-		// TODO Auto-generated method stub
 		return userRepository.findByEmail(email).get();
 	}
 
 	@Override
 	public ResponseEntity<?> sendResetPasswordViaEmail(PasswordResetEmailRequest passwordResetEmailRequest) {
-		// TODO Auto-generated method stub
+
 		if (!userRepository.existsByEmail(passwordResetEmailRequest.getEmail())) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Email  invalid", "ERROR", "API_ER04"));
+			log.info("Not found email : {}", passwordResetEmailRequest.getEmail());
+			
+			return ResponseEntity.badRequest().body(
+					ResponseData.builder()
+					.type(ResponseType.ERROR)
+					.code("API003_ER")
+					.message("This entered email does not exist")
+					.build());
+
 		}
 
 		User user = new User();
@@ -152,35 +188,61 @@ public class UserServiceImpl implements UserService {
 
 		if (user.getStatus() == 0) {
 			return ResponseEntity.badRequest()
-					.body(new MessageResponse("Error: User is not activated!", "ERROR", "XXX"));
+					.body(ResponseData.builder()
+							.type(ResponseType.ERROR)
+							.code("API001_ER02")
+							.message("This account is not active yet")
+							.build());
 		}
 		user.setVerifyCode(UUID.randomUUID().toString());
 		userRepository.save(user);
 
 		emailService.sendResetPasswordViaEmail(passwordResetEmailRequest.getEmail(), user.getVerifyCode());
 
-		return new ResponseEntity<>(
-				new MessageResponse("We have sent an email. Please check email to reset password!", "INFO", "200"),
-				HttpStatus.OK);
+		return ResponseEntity.ok()
+				.body(ResponseData.builder()
+						.type(ResponseType.INFO)
+						.code("200")
+						.message("Verify mail has sent")
+						.build());
 	}
 
 	@Override
 	public ResponseEntity<?> resetPassword(PasswordResetRequest passwordResetRequest) {
 		// TODO Auto-generated method stub
 		if (userRepository.findByVerifyCode(passwordResetRequest.getToken()).isEmpty()) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Verify code does not exist!", "ERROR", "XXX"));
+			log.info("Verify code does not exist : {}", passwordResetRequest.getToken());
+			
+			return ResponseEntity.badRequest().body(
+					ResponseData.builder()
+					.type(ResponseType.ERROR)
+					.code("API005_ERAPI005_ER")
+					.message("Verify code incorrect")
+					.build());
 		}
 		User user = new User();
 		user = userRepository.findByVerifyCode(passwordResetRequest.getToken()).get();
 
 		if (user.getStatus() == 0) {
-			return ResponseEntity.badRequest().body(new MessageResponse("User is not activated!", "ERROR", "XXX"));
+			return ResponseEntity.badRequest().body(
+					ResponseData.builder()
+					.type(ResponseType.ERROR)
+					.code("API001_ER02")
+					.message("This account is not active yet")
+					.build());
 		}
 
 		user.setPassword(encoder.encode(passwordResetRequest.getNewPassword()));
 		user.setVerifyCode(null);
+		
+		log.info("{} reset password successfully!",user.getFullName());
 
-		return new ResponseEntity<>(new MessageResponse("Reset password successfully!", "INFO", "200"), HttpStatus.OK);
+		return ResponseEntity.ok()
+				.body(ResponseData.builder()
+						.type(ResponseType.INFO)
+						.code("200")
+						.message("Reset password successfully!")
+						.build());
 	}
 
 }

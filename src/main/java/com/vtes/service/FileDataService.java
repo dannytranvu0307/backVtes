@@ -27,9 +27,11 @@ import com.vtes.entity.User;
 import com.vtes.exception.UploadFileException;
 import com.vtes.repository.FileDataRepo;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class FileDataService {
-	private Logger LOGGER = LoggerFactory.getLogger(FileDataService.class);
 
 	@Autowired
 	private AmazonS3ServiceImpl amazonS3ServiceImpl;
@@ -58,10 +60,15 @@ public class FileDataService {
 				file.getInputStream());
 		
 		if(putObjectResult != null){
+			log.info("{} uploaded file.",userId);
 			fareService.deleteByUserId(userId);
+			
+			log.info("{} fare detail deleted.",userId);
 			// Saving metadata to db
 			fileDataRepo.save((new FileData(new User(userId), fileName, path, new Date())));
+		
 		}else {
+			log.debug("Can not upload file with user {}",userId);
 			throw new UploadFileException(fileName);
 		}
 
@@ -73,16 +80,17 @@ public class FileDataService {
 	public byte[] download(Integer id, Integer userId) {
 		FileData fileMeta = fileDataRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("File not found"));
 		S3Object s3Object = amazonS3ServiceImpl.download(fileMeta.getFilePath(), fileMeta.getFileName());
-		LOGGER.info("Downloading an object with key= " + fileMeta.getFileName());
+		log.info("Downloading an object with key= " + fileMeta.getFileName());
 
 		byte[] content = null;
 		final S3ObjectInputStream stream = s3Object.getObjectContent();
 		try {
 			content = IOUtils.toByteArray(stream);
-			LOGGER.info("File downloaded successfully.");
+			log.info("User {} is downloaded file {}successfully.", userId,id);
 			s3Object.close();
 		} catch (final IOException ex) {
-			LOGGER.info("IO Error Message= " + ex.getMessage());
+			log.debug("{} download file failed",userId);
+			log.debug("IO Error Message= " + ex.getMessage());
 		}
 		return content;
 	}

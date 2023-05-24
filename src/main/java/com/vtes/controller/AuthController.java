@@ -27,7 +27,8 @@ import com.vtes.exception.TokenRefreshException;
 import com.vtes.payload.request.LoginRequest;
 import com.vtes.payload.request.SignupRequest;
 import com.vtes.payload.request.TokenRefreshRequest;
-import com.vtes.payload.response.MessageResponse;
+import com.vtes.payload.response.ResponseData;
+import com.vtes.payload.response.ResponseData.ResponseType;
 import com.vtes.repository.DepartmentRepository;
 import com.vtes.repository.UserRepository;
 import com.vtes.sercurity.jwt.CookieUtils;
@@ -78,7 +79,11 @@ public class AuthController {
 		user = userRepository.findById(userDetails.getId()).get();
 		if (user.getStatus() == 0) {
 			return ResponseEntity.badRequest()
-					.body(new MessageResponse("This account is not active yet", "ERROR", "API001_ER02"));
+					.body(ResponseData.builder()
+							.code("API001_ER02")
+							.type(ResponseType.ERROR)
+							.message("This account is not active yet")
+							.build());
 		}
 
 		String jwt = jwtUtils.generateJwtToken(userDetails);
@@ -91,7 +96,12 @@ public class AuthController {
 			cookieUtils.createAccessTokenCookie(httpServletResponse, jwt);
 		}
 
-		return ResponseEntity.ok().body(new MessageResponse("Authentication successfull", "INFO", "200"));
+		return ResponseEntity.ok().body(ResponseData.builder()
+									.code("200")
+									.type(ResponseType.INFO)
+									.message("Authentication successfull")
+									.build());
+
 	}
 
 	@PostMapping("/register")
@@ -99,12 +109,20 @@ public class AuthController {
 
 		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
 			return ResponseEntity.badRequest()
-					.body(new MessageResponse("This email has already been used", "ERROR", "API002_ER"));
+					.body(ResponseData.builder()
+							.code("API002_ER")
+							.type(ResponseType.ERROR)
+							.message("This email has already been used")
+							.build());
 		}
 
 		if (departmentRepository.findById(signUpRequest.getDepartmentId()).isEmpty()) {
 			return ResponseEntity.badRequest()
-					.body(new MessageResponse("Department does not exits", "ERROR", "API_ER04"));
+					.body(ResponseData.builder()
+							.code("API_ER04")
+							.type(ResponseType.ERROR)
+							.message("Department does not exits")
+							.build());
 		}
 
 		Department department = new Department();
@@ -117,18 +135,26 @@ public class AuthController {
 		emailService.sendRegistrationUserConfirm(signUpRequest.getEmail(), user.getVerifyCode());
 		userRepository.save(user);
 
-		return ResponseEntity.ok().body(new MessageResponse("Register successful", "INFO", "200"));
+		return ResponseEntity.ok().body(ResponseData.builder()
+									.code("200")
+									.type(ResponseType.INFO)
+									.message("Register successfull")
+									.build());
 	}
 
-	@PostMapping("/refreshtoken")
-	public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request,
-			HttpServletResponse httpServletResponse) {
-		String requestRefreshToken = request.getRefreshToken();
+	@GetMapping("/refreshToken")
+	public ResponseEntity<?> refreshtoken(HttpServletRequest request, HttpServletResponse httpServletResponse) {
+		String requestRefreshToken = cookieUtils.getRefreshTokenFromCookie(request);
 		return refreshTokenService.findByToken(requestRefreshToken).map(refreshTokenService::verifyExpiration)
 				.map(RefreshToken::getUser).map(user -> {
 					String token = jwtUtils.generateTokenFromUsername(user.getEmail());
 					cookieUtils.createAccessTokenCookie(httpServletResponse, token);
-					return ResponseEntity.ok(new MessageResponse("Jwt Token recreated", "INFO", "200"));
+					return ResponseEntity.ok()
+							.body(ResponseData.builder()
+									.type(ResponseType.INFO)
+									.code("200")
+									.message("Jwt Token recreated")
+									.build());
 				})
 				.orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
 	}
@@ -142,7 +168,12 @@ public class AuthController {
 		cookieUtils.deleteCookie(httpServletRequest, httpServletResponse, "refreshToken");
 		Integer userId = userDetails.getId();
 		refreshTokenService.deleteByUserId(userId);
-		return ResponseEntity.ok(new MessageResponse("Jwt Token deleted", "INFO", "200"));
+		return ResponseEntity.ok().body(ResponseData.builder()
+										.type(ResponseType.INFO)
+										.code("200")
+										.message("Jwt Token deleted")
+										.build())
+										;
 	}
 
 }

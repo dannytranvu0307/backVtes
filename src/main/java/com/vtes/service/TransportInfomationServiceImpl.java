@@ -29,6 +29,8 @@ import com.vtes.model.navitime.RouteSummary;
 import com.vtes.model.navitime.Station;
 import com.vtes.model.navitime.SubRoute;
 
+import lombok.extern.slf4j.Slf4j;
+
 /*
  * Author :chien.tranvan
  * Date: 2023/05/21
@@ -37,9 +39,8 @@ import com.vtes.model.navitime.SubRoute;
  * */
 
 @Service
+@Slf4j
 public class TransportInfomationServiceImpl implements TransportInfomationService {
-	private Logger LOGGER = LoggerFactory.getLogger(TransportInfomationServiceImpl.class);
-
 	@Autowired
 	private TotalNaviApiConnect totalnavi;
 
@@ -66,7 +67,7 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 			items = objectMapper.readValue(itemsNode.toString(), new TypeReference<List<Route>>() {
 			});
 		} catch (JsonProcessingException e) {
-			LOGGER.error("Has error when call 3rd API");
+			log.error("Has error when call 3rd API");
 		}
 
 		return items;
@@ -84,7 +85,7 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 			responseData = objectMapper.readValue(itemsNode.toString(), new TypeReference<List<Station>>() {
 			});
 		} catch (JsonProcessingException e) {
-			LOGGER.error("Has error when call 3rd API");
+			log.error("Has error when call 3rd API");
 		}
 		List<Station> stations = new ArrayList<>();
 		if (responseData != null) {

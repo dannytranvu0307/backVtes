@@ -48,4 +48,16 @@ public class CookieUtils {
 	public void createRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
 		createCookie(response, "refreshToken", refreshToken, jwtRefreshExpirationMs, true, false, "/");
 	}
+	public String getRefreshTokenFromCookie(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("refreshToken")) {
+					String accessToken = cookie.getValue();
+					return accessToken;
+				}
+			}
+		}
+		return null;
+	}
 }
