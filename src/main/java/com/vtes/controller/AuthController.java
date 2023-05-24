@@ -120,7 +120,7 @@ public class AuthController {
 		return ResponseEntity.ok().body(new MessageResponse("Register successful", "INFO", "200"));
 	}
 
-	@PostMapping("/refreshtoken")
+	@PostMapping("/refresh-token")
 	public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request,
 			HttpServletResponse httpServletResponse) {
 		String requestRefreshToken = request.getRefreshToken();
