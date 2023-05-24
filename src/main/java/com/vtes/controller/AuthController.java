@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,7 +62,8 @@ public class AuthController {
 	RefreshTokenService refreshTokenService;
 
 	@PostMapping("/login")
-	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse res) {
+	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest,
+			HttpServletResponse httpServletResponse) {
 
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
@@ -86,21 +88,21 @@ public class AuthController {
 			cookieAccessToken.setMaxAge(6000);
 			cookieAccessToken.setSecure(false);
 			cookieAccessToken.setPath("/");
-			res.addCookie(cookieAccessToken);
+			httpServletResponse.addCookie(cookieAccessToken);
 
 			Cookie cookieRefreshToken = new Cookie("refreshToken", refreshToken.getToken());
 			cookieRefreshToken.setHttpOnly(true);
 			cookieRefreshToken.setMaxAge(60000);
 			cookieRefreshToken.setSecure(false);
 			cookieRefreshToken.setPath("/");
-			res.addCookie(cookieRefreshToken);
+			httpServletResponse.addCookie(cookieRefreshToken);
 		} else {
 			Cookie cookieAccessToken = new Cookie("accessToken", jwt);
 			cookieAccessToken.setHttpOnly(true);
 			cookieAccessToken.setMaxAge(6000);
 			cookieAccessToken.setSecure(false);
 			cookieAccessToken.setPath("/");
-			res.addCookie(cookieAccessToken);
+			httpServletResponse.addCookie(cookieAccessToken);
 		}
 
 		return ResponseEntity.ok().body(new MessageResponse("Authentication successfull", "INFO", "200"));
@@ -122,7 +124,6 @@ public class AuthController {
 		Department department = new Department();
 		department = departmentRepository.findById(signUpRequest.getDepartmentId()).get();
 
-		// Create new user's account
 		User user = new User(signUpRequest.getFullName(), signUpRequest.getEmail(),
 				encoder.encode(signUpRequest.getPassword()), department);
 		user.setStatus((short) 0);
@@ -135,7 +136,8 @@ public class AuthController {
 	}
 
 	@PostMapping("/refreshtoken")
-	public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request, HttpServletResponse res) {
+	public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request,
+			HttpServletResponse httpServletResponse) {
 		String requestRefreshToken = request.getRefreshToken();
 		return refreshTokenService.findByToken(requestRefreshToken).map(refreshTokenService::verifyExpiration)
 				.map(RefreshToken::getUser).map(user -> {
@@ -145,16 +147,22 @@ public class AuthController {
 					cookieAccessToken.setMaxAge(6000);
 					cookieAccessToken.setSecure(false);
 					cookieAccessToken.setPath("/api/v1/auth");
-					res.addCookie(cookieAccessToken);
+					httpServletResponse.addCookie(cookieAccessToken);
 					return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
 				})
 				.orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
 	}
 
-	@PostMapping("/logout")
-	public ResponseEntity<?> logoutUser() {
+	@GetMapping("/logout")
+	public ResponseEntity<?> logoutUser(HttpServletResponse httpServletResponse) {
 		UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
 				.getPrincipal();
+		Cookie cookieAccessToken = new Cookie("accessToken", null);
+		cookieAccessToken.setHttpOnly(true);
+		cookieAccessToken.setMaxAge(6000);
+		cookieAccessToken.setSecure(false);
+		cookieAccessToken.setPath("/");
+		httpServletResponse.addCookie(cookieAccessToken);
 		Integer userId = userDetails.getId();
 		refreshTokenService.deleteByUserId(userId);
 		return ResponseEntity.ok(new MessageResponse("Jwt Token deleted", "INFO", "200"));
