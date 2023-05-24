@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `tbl_fare`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tbl_fare` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `ACCOUNT_ID` int NOT NULL,
+  `USER_ID` int NOT NULL,
   `VISIT_LOCATION` varchar(256) NOT NULL,
   `DEPARTURE` varchar(256) NOT NULL,
   `DESTINATION` varchar(256) NOT NULL,
@@ -33,12 +33,13 @@ CREATE TABLE `tbl_fare` (
   `ROUND_TRIP` tinyint(1) NOT NULL,
   `FEE` int NOT NULL,
   `TRANSPORTATION` tinyint(1) NOT NULL,
-  `CREATE_DT` datetime NOT NULL,
-  `DELETE_FLAG` tinyint(1) NOT NULL DEFAULT '0',
+  `VISIT_DT` datetime NOT NULL,
+  `CREATE_DT` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `DELETE_FLAG` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`ID`),
-  KEY `ACCOUNT_ID` (`ACCOUNT_ID`),
-  CONSTRAINT `tbl_fare_ibfk_1` FOREIGN KEY (`ACCOUNT_ID`) REFERENCES `tbl_account` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `tbl_fare_ibfk_1` (`USER_ID`),
+  CONSTRAINT `tbl_fare_ibfk_1` FOREIGN KEY (`USER_ID`) REFERENCES `tbl_user` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -59,4 +60,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-18 11:37:28
+-- Dump completed on 2023-05-23 15:18:07

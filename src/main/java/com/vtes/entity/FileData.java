@@ -16,6 +16,11 @@ import javax.persistence.TemporalType;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -28,24 +33,28 @@ public class FileData {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID")
+	@JsonProperty("fileId")
 	private Integer id;
-	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "USER_ID",referencedColumnName = "ID")
+
+	@ManyToOne
+	@JoinColumn(name = "USER_ID", referencedColumnName = "ID")
+	@JsonIgnore
 	private User user;
-	
+
 	@Column(name = "FILE_NAME")
 	private String fileName;
-	
+
 	@Column(name = "FILE_PATH")
+	@JsonIgnore
 	private String filePath;
-	
+
 	@Column(name = "EXPORTED_DT")
 	@Temporal(TemporalType.TIMESTAMP)
-	@DateTimeFormat(pattern = "yyyy/MM/dd")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
 	private Date exportedDate;
-	
+
 	@Column(name = "DELETE_FLAG")
+	@JsonIgnore
 	private boolean deleteFlag;
 
 	public FileData(User user, String fileName, String fileCode, Date exportedDate) {

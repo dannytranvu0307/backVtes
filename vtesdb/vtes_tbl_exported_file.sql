@@ -16,38 +16,34 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `tbl_account`
+-- Table structure for table `tbl_exported_file`
 --
 
-DROP TABLE IF EXISTS `tbl_account`;
+DROP TABLE IF EXISTS `tbl_exported_file`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tbl_account` (
+CREATE TABLE `tbl_exported_file` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `FULL_NAME` varchar(128) NOT NULL,
-  `EMAIL` varchar(256) NOT NULL,
-  `PASSWORD` varchar(512) NOT NULL,
-  `DEPARTMENT_NAME` varchar(64) DEFAULT NULL,
-  `STATUS` tinyint NOT NULL DEFAULT '0',
-  `VERIFY_CODE` varchar(256) DEFAULT NULL,
-  `CREATE_DT` datetime DEFAULT NULL,
-  `UPDATE_DT` datetime DEFAULT NULL,
+  `USER_ID` int NOT NULL,
+  `FILE_NAME` varchar(256) NOT NULL,
+  `FILE_PATH` varchar(256) NOT NULL,
+  `EXPORTED_DT` timestamp NOT NULL,
+  `CREATE_DT` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `UPDATE_DT` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `DELETE_FLAG` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`ID`),
-  UNIQUE KEY `FULL_NAME` (`FULL_NAME`),
-  UNIQUE KEY `EMAIL` (`EMAIL`),
-  CONSTRAINT `tbl_account_chk_1` CHECK (((length(`FULL_NAME`) >= 6) and (length(`FULL_NAME`) <= 64))),
-  CONSTRAINT `tbl_account_chk_2` CHECK (((length(`EMAIL`) >= 6) and (length(`EMAIL`) <= 256)))
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `tbl_exported_history_ibfk_1` (`USER_ID`),
+  CONSTRAINT `tbl_exported_file_ibfk_1` FOREIGN KEY (`USER_ID`) REFERENCES `tbl_user` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `tbl_account`
+-- Dumping data for table `tbl_exported_file`
 --
 
-LOCK TABLES `tbl_account` WRITE;
-/*!40000 ALTER TABLE `tbl_account` DISABLE KEYS */;
-INSERT INTO `tbl_account` VALUES (1,'NGUYEN VAN A','chient369@gmail.com','$2a$10$WaxVvX4q7OcuGKFmWWEvA.1PwWujrMkQK1WSzg.caMrkbEZhxt1Zu',NULL,0,NULL,NULL,NULL);
-/*!40000 ALTER TABLE `tbl_account` ENABLE KEYS */;
+LOCK TABLES `tbl_exported_file` WRITE;
+/*!40000 ALTER TABLE `tbl_exported_file` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tbl_exported_file` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -59,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-18 11:37:29
+-- Dump completed on 2023-05-23 15:18:07

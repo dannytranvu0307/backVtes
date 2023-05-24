@@ -16,31 +16,31 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `tbl_exported_history`
+-- Table structure for table `tbl_refresh_token`
 --
 
-DROP TABLE IF EXISTS `tbl_exported_history`;
+DROP TABLE IF EXISTS `tbl_refresh_token`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tbl_exported_history` (
+CREATE TABLE `tbl_refresh_token` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `ACCOUNT_ID` int NOT NULL,
-  `FILE_NAME` varchar(256) NOT NULL,
-  `FILE_URI` varchar(256) NOT NULL,
-  `EXPORTED_DT` datetime NOT NULL,
+  `USER_ID` int NOT NULL,
+  `TOKEN` varchar(256) NOT NULL,
+  `EXPIRY_DATE` datetime NOT NULL,
   PRIMARY KEY (`ID`),
-  KEY `ACCOUNT_ID` (`ACCOUNT_ID`),
-  CONSTRAINT `tbl_exported_history_ibfk_1` FOREIGN KEY (`ACCOUNT_ID`) REFERENCES `tbl_account` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `tbl_refresh_token_ibfk_1` (`USER_ID`),
+  CONSTRAINT `tbl_refresh_token_ibfk_1` FOREIGN KEY (`USER_ID`) REFERENCES `tbl_user` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `tbl_exported_history`
+-- Dumping data for table `tbl_refresh_token`
 --
 
-LOCK TABLES `tbl_exported_history` WRITE;
-/*!40000 ALTER TABLE `tbl_exported_history` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tbl_exported_history` ENABLE KEYS */;
+LOCK TABLES `tbl_refresh_token` WRITE;
+/*!40000 ALTER TABLE `tbl_refresh_token` DISABLE KEYS */;
+INSERT INTO `tbl_refresh_token` VALUES (1,3,'af23e45e-f6a8-4726-85ab-7ebb96d84a13','2023-05-23 15:13:20');
+/*!40000 ALTER TABLE `tbl_refresh_token` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -52,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-18 11:37:28
+-- Dump completed on 2023-05-23 15:18:07

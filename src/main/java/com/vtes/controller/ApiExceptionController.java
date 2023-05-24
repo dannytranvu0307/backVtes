@@ -5,6 +5,8 @@ import javax.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -54,6 +56,29 @@ public class ApiExceptionController {
 				.build();
 		
 	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	public ResponseData bodyRequestAgrgumentInvalid(Exception ex) {
+		return ResponseData.builder()
+				.code("API_ER03")
+				.message("Invalid request body of data")
+				.type(ResponseType.ERROR)
+				.build();
+		
+	}
+	
+	
+	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	public ResponseData methodNotAllowException(Exception ex) {
+		return ResponseData.builder()
+				.code("API_ER03")
+				.message("Method not allow")
+				.type(ResponseType.ERROR)
+				.build();
+		
+	}
 	
 	@ExceptionHandler(MissingServletRequestParameterException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
@@ -65,6 +90,7 @@ public class ApiExceptionController {
 				.build();
 		
 	}
+	
 	@ExceptionHandler(FareNotFoundException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public ResponseData fareNotFoundException(FareNotFoundException ex) {

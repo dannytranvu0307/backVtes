@@ -3,6 +3,7 @@ package com.vtes.service;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -62,19 +63,24 @@ public class FileDataService {
 		FileData fileMeta = fileDataRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("File not found"));
 		S3Object s3Object = amazonS3ServiceImpl.download(fileMeta.getFilePath(), fileMeta.getFileName());
 		LOGGER.info("Downloading an object with key= " + fileMeta.getFileName());
-		
+
 		byte[] content = null;
-        final S3ObjectInputStream stream = s3Object.getObjectContent();
-        try {
-            content = IOUtils.toByteArray(stream);
-            LOGGER.info("File downloaded successfully.");
-            s3Object.close();
-        } catch(final IOException ex) {
-            LOGGER.info("IO Error Message= " + ex.getMessage());
-        }
-        return content;
+		final S3ObjectInputStream stream = s3Object.getObjectContent();
+		try {
+			content = IOUtils.toByteArray(stream);
+			LOGGER.info("File downloaded successfully.");
+			s3Object.close();
+		} catch (final IOException ex) {
+			LOGGER.info("IO Error Message= " + ex.getMessage());
+		}
+		return content;
 	}
-	
+
+	public List<FileData> findByUserId(Integer userId) {
+		return fileDataRepo.findByUserId(userId).get();
+
+	}
+
 	public String getFileNameById(Integer id) {
 		return fileDataRepo.findFileNameById(id);
 	}

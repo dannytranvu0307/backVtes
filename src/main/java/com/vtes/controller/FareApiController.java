@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,7 +33,7 @@ public class FareApiController {
 	private FareService fareService;
 
 	@PostMapping("/fares")
-	public ResponseEntity<?> saveFareRecord(@Valid @RequestBody FareDTO fareDTO, HttpServletRequest request) throws ParseException {
+	public ResponseEntity<?> saveFareRecord(@Valid @RequestBody FareDTO fareDTO, HttpServletRequest request) throws ParseException, MethodArgumentNotValidException {
 		fareDTO.setUserId(getAuthenticatedUserId());
 		FareDTO savedFare = fareService.saveFareRecord(fareDTO);
 		
@@ -54,7 +55,7 @@ public class FareApiController {
 		if(!fareService.isExistFare(userId,recordId))
 			throw new FareNotFoundException("Fare ID is not found");
 		
-			fareService.deleteFareRecord(recordId);
+		fareService.deleteFareRecord(recordId);
 		return ResponseEntity.ok()
 				.body(ResponseData.builder()
 					.code("200")
