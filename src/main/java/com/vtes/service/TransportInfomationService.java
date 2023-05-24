@@ -7,7 +7,8 @@ import com.vtes.model.navitime.CommuterPassDetail;
 import com.vtes.model.navitime.Route;
 import com.vtes.model.navitime.Station;
 /*
- * @Author : ChienVti
+ * @Author : chien.tranvan
+ * Date : 2023/05/21
  * Define methods of obtaining 3rd party information
  * */
 public interface TransportInfomationService {

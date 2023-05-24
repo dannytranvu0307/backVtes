@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.vtes.entity.FileData;
+import com.vtes.exception.UploadFileException;
 import com.vtes.model.ResponseData;
 import com.vtes.model.ResponseData.ResponseType;
 import com.vtes.sercurity.services.UserDetailsImpl;
@@ -47,7 +48,7 @@ public class FileApiController {
 	}
 
 	@PostMapping( produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+	public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) throws IOException, UploadFileException {
 
 		// upload file to S3 and save file data to DB
 		fileService.uploadFileToS3(getAuthenticatedUserId(), file);

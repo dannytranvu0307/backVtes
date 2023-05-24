@@ -28,6 +28,10 @@ public class FareService {
 		repo.deleteById(recordId);
 	}
 	
+	public void deleteByUserId(Integer userId) {
+		repo.deleteByUserId(userId);
+	}
+	
 	public List<Fare> findAll() {
 		return repo.findAll();
 	}

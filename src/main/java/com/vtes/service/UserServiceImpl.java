@@ -1,6 +1,5 @@
 package com.vtes.service;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.vtes.entity.CommuterPass;
 import com.vtes.entity.Department;
 import com.vtes.entity.User;
-import com.vtes.exception.CommuterPassNotFound;
 import com.vtes.model.CommuterPassDTO;
 import com.vtes.payload.request.PasswordResetEmailRequest;
 import com.vtes.payload.request.PasswordResetRequest;
@@ -130,7 +128,6 @@ public class UserServiceImpl implements UserService {
 	        commuterPass.setDestination(commuterPassDTO.getDestination());
 	        commuterPass.setVia(via);
 	        commuterPass.setViaDetail(viaDetail);
-
 	        commuterPass.setUser(new User(userId));
 	        user.setCommuterPass(commuterPass);
 	    }

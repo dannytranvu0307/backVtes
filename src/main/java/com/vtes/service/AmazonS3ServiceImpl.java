@@ -14,6 +14,11 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
 
+/*
+ * Author : Chien@vti
+ * Date : 2023/05/20
+ * */
+
 @Service
 public class AmazonS3ServiceImpl implements AmazonS3Service {
 	private Logger LOGGER = LoggerFactory.getLogger(AmazonS3ServiceImpl.class);

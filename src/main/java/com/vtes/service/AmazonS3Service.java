@@ -6,7 +6,11 @@ import java.util.Optional;
 
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
-
+/*
+ * Author : Chien@vti
+ * Date : 2023/05/20
+ * - Define method access to aws s3
+ * */
 public interface AmazonS3Service {
 	public PutObjectResult upload(
             String path,

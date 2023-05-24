@@ -19,4 +19,7 @@ public interface FareRepo extends JpaRepository<Fare, Integer> {
 	
 	@Query("select f from Fare f where f.user.id = ?1 and f.id = ?2")
 	Optional<Fare> findByIdAnhUserId(Integer userId, Integer recordId);
+	
+	@Query("update Fare f set f.deleteFlag = true where f.user.id = ?1")
+	void deleteByUserId(Integer userId);
 }

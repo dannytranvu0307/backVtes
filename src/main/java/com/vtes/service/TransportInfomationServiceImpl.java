@@ -29,6 +29,13 @@ import com.vtes.model.navitime.RouteSummary;
 import com.vtes.model.navitime.Station;
 import com.vtes.model.navitime.SubRoute;
 
+/*
+ * Author :chien.tranvan
+ * Date: 2023/05/21
+ * 
+ * This get params from client and call third-part API then convert response data to navitime model
+ * */
+
 @Service
 public class TransportInfomationServiceImpl implements TransportInfomationService {
 	private Logger LOGGER = LoggerFactory.getLogger(TransportInfomationServiceImpl.class);
@@ -44,14 +51,11 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 
 	public List<Route> searchRoutes(Map<String, Object> params) {
 		List<Route> items = null;
-		Date currentDate = new Date();
-
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-		String formattedDateTime = sdf.format(currentDate);
+		String formattedDateTime = sdf.format(new Date());
 		
 		params.put("start_time", formattedDateTime);
 		
-
 		ResponseEntity<String> json = totalnavi.searchRoutes(params);
 		String jsonString = json.getBody();
 
@@ -96,13 +100,6 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 		
 	}
 	
-	private boolean validateParameter(String start, String goal) {
-		if(start == "" && goal == "") {
-			return true;
-		}
-		return false;
-	}
-	
 	private List<CommuterPassDetail> convertCommuterPass(List<Route> routes) {
 		List<CommuterPassDetail> cpDetails = routes.parallelStream()
 	            .map(route -> {
@@ -145,67 +142,5 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 		
 	}
 
-	
-
-//	private List<CommuterPassDetail> convertCommuterPass(List<Route> routes) {
-//		AtomicInteger counter = new AtomicInteger(1);
-//		List<CommuterPassDetail> cpDetails = routes.stream().map(route -> {
-//			CommuterPassDetail cp = new CommuterPassDetail();
-//
-//			RouteSummary summary = route.getSummary();
-//			cp.setStart(summary.getStart());
-//			cp.setGoal(summary.getGoal());
-//			cp.setNo(counter.getAndIncrement());
-//			
-//			
-//			Set<String> viaStations = new HashSet<>();
-//			List<String> symbols = new ArrayList<String>();
-//			int index = 0;
-//			List<RouteSectionItem> sections = route.getSections();
-//			for (int i = 0; i< sections.size(); i++) {	
-//				RouteSectionItem sc = sections.get(i);
-//				if(sc.getType().equals("point")) {
-//					viaStations.add(sc.getName());
-//					if(index % 2 == 0) {
-//						if (sc.getNumbering().getDeparture().size() == 1) {
-//							symbols.add(sc.getNumbering().getDeparture().get(1).getSymbol());	
-//						}						
-//					}else
-//					if (sc.getNumbering().getArrival().size() == 1) {
-//						symbols.add(sc.getNumbering().getArrival().get(1).getSymbol());
-//					}
-//				}
-//			}
-//			cp.setViaStations(viaStations);
-//			List<SubRoute> subRoutes = route.getSections().stream().map(sc -> {
-//				SubRoute subRoute = new SubRoute();
-//				if ("move".equals(sc.getType()) && sc.getTransport() != null) {
-//					subRoute.setLineColor(sc.getTransport().getLineColor());
-//
-//					List<String> linkJson = Optional.ofNullable(sc.getTransport().getLinks()).map(
-//							links -> links.stream().map(link -> link.generateViaJson()).collect(Collectors.toList()))
-//							.orElse(Collections.emptyList());
-//
-//					subRoute.setLinks(linkJson);
-//				}
-//				return subRoute;
-//			}).collect(Collectors.toList());
-//			List<SubRoute> filteredSubRoutes = new ArrayList<>();
-//			for(int i = 0 ; i < subRoutes.size(); i++) {
-//				SubRoute rt = subRoutes.get(i);
-//				if(rt.getLinks() != null) {
-//					rt.setLineSymbol(symbols.get(i));
-//					filteredSubRoutes.add(rt);
-//				}
-//			}
-//			
-//			cp.setViaRoutes(filteredSubRoutes);
-//
-//			return cp;
-//		}).collect(Collectors.toList());
-//		
-//		return cpDetails;
-//	}
-	
 
 }

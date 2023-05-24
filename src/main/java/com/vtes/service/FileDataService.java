@@ -24,6 +24,7 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.vtes.entity.FileData;
 import com.vtes.entity.User;
+import com.vtes.exception.UploadFileException;
 import com.vtes.repository.FileDataRepo;
 
 @Service
@@ -35,12 +36,15 @@ public class FileDataService {
 
 	@Autowired
 	private FileDataRepo fileDataRepo;
+	
+	@Autowired
+	private FareService fareService;
 
 	@Value("${aws.s3.bucket.name}")
 	private String bucketName;
 
 	@Async
-	public void uploadFileToS3(Integer userId, MultipartFile file) throws IOException {
+	public void uploadFileToS3(Integer userId, MultipartFile file) throws IOException, UploadFileException {
 
 		Map<String, String> metadata = new HashMap<>();
 		metadata.put("Content-Type", file.getContentType());
@@ -52,9 +56,16 @@ public class FileDataService {
 		// Uploading file to s3
 		PutObjectResult putObjectResult = amazonS3ServiceImpl.upload(path, fileName, Optional.of(metadata),
 				file.getInputStream());
+		
+		if(putObjectResult != null){
+			fareService.deleteByUserId(userId);
+			// Saving metadata to db
+			fileDataRepo.save((new FileData(new User(userId), fileName, path, new Date())));
+		}else {
+			throw new UploadFileException(fileName);
+		}
 
-		// Saving metadata to db
-		fileDataRepo.save((new FileData(new User(userId), fileName, path, new Date())));
+		
 
 	}
 
