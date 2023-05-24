@@ -3,6 +3,7 @@ package com.vtes.sercurity;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,6 +35,9 @@ public class WebSecurityConfig {
 
 	@Autowired
 	private AuthEntryPointJwt unauthorizedHandler;
+	
+	@Value("${vtes.cros.url}")
+	private String crosUrl;
 
 	@Bean
 	public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -78,7 +82,7 @@ public class WebSecurityConfig {
 	@Bean
 	public CorsFilter corsFilter() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+		config.setAllowedOrigins(Arrays.asList(crosUrl));
 		config.setAllowCredentials(true);
 		config.addAllowedMethod("*");
 		config.addAllowedHeader("*");
