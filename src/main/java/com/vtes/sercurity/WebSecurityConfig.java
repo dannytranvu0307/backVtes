@@ -1,5 +1,7 @@
 package com.vtes.sercurity;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +18,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import com.vtes.sercurity.jwt.AuthEntryPointJwt;
 import com.vtes.sercurity.jwt.AuthTokenFilter;
@@ -59,11 +64,8 @@ public class WebSecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
-				.antMatchers("/api/v1/auth/**").permitAll()
-				.antMatchers("/api/v1/users/active").permitAll()
-				.antMatchers("/api/v1/users/emails").permitAll()
-				.antMatchers("/api/v1/departments").permitAll()
-				//.antMatchers("/api/v1/*").permitAll()
+				.antMatchers("/api/v1/auth/**").permitAll().antMatchers("/api/v1/users/active").permitAll()
+				.antMatchers("/api/v1/users/emails").permitAll().antMatchers("/api/v1/departments").permitAll()
 				.anyRequest().authenticated();
 
 		http.authenticationProvider(authenticationProvider());
@@ -71,5 +73,18 @@ public class WebSecurityConfig {
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
+	}
+
+	@Bean
+	public CorsFilter corsFilter() {
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+		config.setAllowCredentials(true);
+		config.addAllowedMethod("*");
+		config.addAllowedHeader("*");
+		config.addExposedHeader("Set-Cookie");
+		UrlBasedCorsConfigurationSource configSource = new UrlBasedCorsConfigurationSource();
+		configSource.registerCorsConfiguration("/**", config);
+		return new CorsFilter(configSource);
 	}
 }
