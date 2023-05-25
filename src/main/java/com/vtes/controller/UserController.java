@@ -19,6 +19,7 @@ import com.vtes.entity.User;
 import com.vtes.payload.request.PasswordResetEmailRequest;
 import com.vtes.payload.request.PasswordResetRequest;
 import com.vtes.payload.request.UpdateInfoRequest;
+import com.vtes.payload.request.UserActiveRequest;
 import com.vtes.payload.response.ResponseData;
 import com.vtes.payload.response.UserResponse;
 import com.vtes.payload.response.ResponseData.ResponseType;
@@ -71,10 +72,10 @@ public class UserController {
 						.build());
 	}
 
-	@GetMapping("/active")
-	public ResponseEntity<?> activeUser(@RequestParam String verifyCode) {
+	@PostMapping("/active")
+	public ResponseEntity<?> activeUser(@RequestBody UserActiveRequest userActiveRequest) {
 
-		return userService.activeUser(verifyCode);
+		return userService.activeUser(userActiveRequest.getToken());
 	}
 
 	@PostMapping("/emails")

@@ -30,132 +30,88 @@ public class ApiExceptionController {
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 	public ResponseData badRequestResponse(Exception ex) {
 		LOGGER.error(ex.getMessage());
-		return ResponseData.builder()
-				.code("500")
-				.message("Server error")
-				.type(ResponseType.ERROR)
+		return ResponseData.builder().code("500").message("Server error" + ex.getMessage()).type(ResponseType.ERROR)
 				.build();
-		
+
 	}
-	
+
 	@ExceptionHandler(value = TokenRefreshException.class)
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	public ResponseData handleTokenRefreshException(TokenRefreshException ex, WebRequest request) {
-		return ResponseData.builder()
-				.type(ResponseType.ERROR)
-				.code("403")
-				.message(ex.getMessage())
-				.build();
+		return ResponseData.builder().type(ResponseType.ERROR).code("403").message(ex.getMessage()).build();
 	}
-	
+
 	@ExceptionHandler(IllegalArgumentException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public ResponseData methodArgumentTypeMissmatch(Exception ex) {
-		return ResponseData.builder()
-				.code("405")
-				.message(ex.getMessage())
-				.type(ResponseType.ERROR)
-				.build();
-		
+		return ResponseData.builder().code("405").message(ex.getMessage()).type(ResponseType.ERROR).build();
+
 	}
-	
+
 	@ExceptionHandler(ParameterInvalidException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public ResponseData invalidParamExResponse(Exception ex) {
-		return ResponseData.builder()
-				.code("API_ER02")
-				.message("Invalid parameter")
-				.type(ResponseType.ERROR)
-				.build();
-		
+		return ResponseData.builder().code("API_ER02").message("Invalid parameter").type(ResponseType.ERROR).build();
+
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public ResponseData bodyRequestAgrgumentInvalid(Exception ex) {
-		return ResponseData.builder()
-				.code("API_ER03")
-				.message("Invalid request body of data")
-				.type(ResponseType.ERROR)
+		return ResponseData.builder().code("API_ER03").message("Invalid request body of data").type(ResponseType.ERROR)
 				.build();
-		
+
 	}
-	
-	
+
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
 	@ResponseStatus(value = HttpStatus.METHOD_NOT_ALLOWED)
 	public ResponseData methodNotAllowException(Exception ex) {
-		return ResponseData.builder()
-				.code("API_ER03")
-				.message("Method not allow")
-				.type(ResponseType.ERROR)
-				.build();
-		
+		return ResponseData.builder().code("API_ER03").message("Method not allow").type(ResponseType.ERROR).build();
+
 	}
-	
+
 	@ExceptionHandler(MissingServletRequestParameterException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public ResponseData missingRequestParameterResponse(Exception ex) {
-		return ResponseData.builder()
-				.code("API_ER02")
-				.message(ex.getMessage())
-				.type(ResponseType.ERROR)
-				.build();
-		
+		return ResponseData.builder().code("API_ER02").message(ex.getMessage()).type(ResponseType.ERROR).build();
+
 	}
-	
+
 	@ExceptionHandler(FareNotFoundException.class)
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
 	public ResponseData fareNotFoundException(FareNotFoundException ex) {
-		return ResponseData.builder()
-				.code("API010_ER")
-				.message("Not found fare record")
-				.type(ResponseType.WARINING)
+		return ResponseData.builder().code("API010_ER").message("Not found fare record").type(ResponseType.WARINING)
 				.build();
-		
+
 	}
-	
+
 	@ExceptionHandler(MaxUploadSizeExceededException.class)
 	@ResponseStatus(value = HttpStatus.PAYLOAD_TOO_LARGE)
 	public ResponseData maxUploadSizeExceoption(Exception ex) {
-		return ResponseData.builder()
-				.code("API006_ER")
-				.message("This file size is too large")
-				.type(ResponseType.ERROR)
+		return ResponseData.builder().code("API006_ER").message("This file size is too large").type(ResponseType.ERROR)
 				.build();
-		
+
 	}
-	
+
 	@ExceptionHandler(UploadFileException.class)
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 	public ResponseData uploadFileError(Exception ex) {
-		return ResponseData.builder()
-				.code("API_ER03")
-				.message(ex.getMessage())
-				.type(ResponseType.ERROR)
-				.build();
-		
+		return ResponseData.builder().code("API_ER03").message(ex.getMessage()).type(ResponseType.ERROR).build();
+
 	}
-	
+
 	@ExceptionHandler(EntityNotFoundException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public ResponseData notFoundResource(EntityNotFoundException ex) {
-		return ResponseData.builder()
-				.code("404")
-				.message(ex.getMessage())
-				.type(ResponseType.ERROR)
-				.build();
-		
+		return ResponseData.builder().code("404").message(ex.getMessage()).type(ResponseType.ERROR).build();
+
 	}
+
 	@ExceptionHandler(CommuterPassNotFound.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public ResponseData notFoundCommuterPass(Exception ex) {
-		return ResponseData.builder()
-				.code("API008_ER")
-				.message(ex.getMessage())
-				.type(ResponseType.ERROR)
-				.build();
-		
+		return ResponseData.builder().code("API008_ER").message(ex.getMessage()).type(ResponseType.ERROR).build();
+
 	}
-	
+
 }
