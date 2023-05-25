@@ -93,16 +93,13 @@ public class UserServiceImpl implements UserService {
 
 				log.info("{} of entered password not match", user.getFullName());
 
-<<<<<<< HEAD
+
 	    return ResponseEntity.ok().body(
 	    		ResponseData.builder()
 	    		.type(ResponseType.INFO)
 	    		.code("")
 	    		.message("Update successfull")
 	    		.build());
-=======
-				return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("API_ER04")
-						.message("Password not match").build());
 			}
 
 			updateUserPassword(user, updateInfoRequest.getPassword());
@@ -120,7 +117,6 @@ public class UserServiceImpl implements UserService {
 
 	private boolean isTokenActiveUserExists(String token) {
 		return !userRepository.findByVerifyCode(token).isEmpty();
->>>>>>> 4ff8b62ae9a1f1b7b3bf74b8f032c4f316fd29ec
 	}
 
 	private User getUserByEmail(String email) {
@@ -150,7 +146,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void updateCommuterPass(User user, Integer userId, CommuterPassDTO commuterPassDTO) {
-<<<<<<< HEAD
 	    if (commuterPassDTO != null) {
 	        String viaDetail = commuterPassDTO.getViaDetail().toString();
 
@@ -161,20 +156,6 @@ public class UserServiceImpl implements UserService {
 	        commuterPass.setUser(new User(userId));
 	        user.setCommuterPass(commuterPass);
 	    }
-=======
-		if (commuterPassDTO != null) {
-			String via = commuterPassDTO.getVia().toString();
-			String viaDetail = commuterPassDTO.getViaDetail().toString();
-
-			CommuterPass commuterPass = commuterPassRepo.findByUserId(userId).orElse(new CommuterPass());
-			commuterPass.setDeparture(commuterPassDTO.getDeparture());
-			commuterPass.setDestination(commuterPassDTO.getDestination());
-			commuterPass.setVia(via);
-			commuterPass.setViaDetail(viaDetail);
-			commuterPass.setUser(new User(userId));
-			user.setCommuterPass(commuterPass);
-		}
->>>>>>> 4ff8b62ae9a1f1b7b3bf74b8f032c4f316fd29ec
 	}
 
 	@Override
@@ -207,17 +188,12 @@ public class UserServiceImpl implements UserService {
 
 		emailService.sendResetPasswordViaEmail(passwordResetEmailRequest.getEmail(), user.getVerifyCode());
 
-<<<<<<< HEAD
 		return ResponseEntity.ok()
 				.body(ResponseData.builder()
 						.type(ResponseType.INFO)
 						.code("")
 						.message("Verify mail has sent")
 						.build());
-=======
-		return ResponseEntity.ok().body(
-				ResponseData.builder().type(ResponseType.INFO).code("200").message("Verify mail has sent").build());
->>>>>>> 4ff8b62ae9a1f1b7b3bf74b8f032c4f316fd29ec
 	}
 
 	@Override
@@ -252,23 +228,19 @@ public class UserServiceImpl implements UserService {
 		user.setVerifyCode(null);
 		userRepository.save(user);
 
-<<<<<<< HEAD
+		log.info("{} reset password successfully!", user.getFullName());
 		return ResponseEntity.ok()
 				.body(ResponseData.builder()
 						.type(ResponseType.INFO)
 						.code("")
 						.message("Reset password successfully!")
 						.build());
-=======
-		log.info("{} reset password successfully!", user.getFullName());
 
-		return ResponseEntity.ok().body(ResponseData.builder().type(ResponseType.INFO).code("200")
-				.message("Reset password successfully!").build());
 	}
 
 	private boolean isTokenResetPasswordExists(String token) {
 		return !userRepository.findByVerifyCode(token).isEmpty();
->>>>>>> 4ff8b62ae9a1f1b7b3bf74b8f032c4f316fd29ec
+
 	}
 
 }
