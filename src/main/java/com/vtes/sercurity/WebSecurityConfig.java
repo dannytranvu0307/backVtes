@@ -35,7 +35,7 @@ public class WebSecurityConfig {
 
 	@Autowired
 	private AuthEntryPointJwt unauthorizedHandler;
-	
+
 	@Value("${vtes.cros.url}")
 	private String crosUrl;
 
@@ -69,8 +69,8 @@ public class WebSecurityConfig {
 		http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
 				.antMatchers("/api/v1/auth/**").permitAll().antMatchers("/api/v1/users/active").permitAll()
-				.antMatchers("/api/v1/users/emails").permitAll().antMatchers("/api/v1/departments").permitAll()
-				.anyRequest().authenticated();
+				.antMatchers("/api/v1/users/emails").permitAll().antMatchers("/api/v1/users/reset-password").permitAll()
+				.antMatchers("/api/v1/departments").permitAll().anyRequest().authenticated();
 
 		http.authenticationProvider(authenticationProvider());
 
