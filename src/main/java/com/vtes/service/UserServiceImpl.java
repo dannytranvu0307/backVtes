@@ -1,7 +1,5 @@
 package com.vtes.service;
 
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +17,7 @@ import com.vtes.payload.response.ResponseData.ResponseType;
 import com.vtes.repository.CommuterPassRepo;
 import com.vtes.repository.DepartmentRepository;
 import com.vtes.repository.UserRepository;
+import com.vtes.sercurity.jwt.JwtUtils;
 import com.vtes.sercurity.services.UserDetailsImpl;
 
 import lombok.extern.slf4j.Slf4j;
@@ -42,112 +41,116 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	EmailService emailService;
 
+	@Autowired
+	JwtUtils jwtUtils;
+
 	@Override
 	public ResponseEntity<?> activeUser(String token) {
 		// TODO Auto-generated method stub
 		User user = new User();
-		if (!userRepository.findByVerifyCode(token).isEmpty()) {
-			user = userRepository.findByVerifyCode(token).get();
-			user.setVerifyCode(null);
-			user.setStatus((short) 1);
-			userRepository.save(user);
-			
-			log.info("User {} of account is active",user.getFullName());
-			
-			return ResponseEntity.ok()
-					.body(ResponseData.builder()
-						.type(ResponseType.INFO)
-						.code("200")
-						.message("Account verify successfully")
-						.build());
-		} else {
-			return ResponseEntity.badRequest()
-					.body(ResponseData.builder()
-							.type(ResponseType.ERROR)
-							.code("API005_ER")
-							.message("Verify code incorrect")
-							.build()
-							);
+
+		if (!isTokenActiveUserExists(token)) {
+			return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("API005_ER")
+					.message("Verify code incorrect").build());
 		}
+
+		if (!jwtUtils.validateJwtToken(token)) {
+			log.info("Verify code has expired : {}", token);
+
+			return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("XXXX")
+					.message("Verify code has expired").build());
+		}
+
+		user = userRepository.findByVerifyCode(token).get();
+		user.setVerifyCode(null);
+		user.setStatus((short) 1);
+		userRepository.save(user);
+
+		log.info("User {} of account is active", user.getFullName());
+
+		return ResponseEntity.ok().body(ResponseData.builder().type(ResponseType.INFO).code("200")
+				.message("Account verify successfully").build());
 
 	}
 
 	@Override
 	public ResponseEntity<?> updateUser(UpdateInfoRequest updateInfoRequest, UserDetailsImpl userDetailsImpl) {
-	    User user = getUserByEmail(userDetailsImpl.getEmail());
+		User user = getUserByEmail(userDetailsImpl.getEmail());
 
-	    if (!departmentExists(updateInfoRequest.getDepartmentId())) {
-	    	log.debug("Bad request with department ID {}", updateInfoRequest.getDepartmentId());
-	    	
-	        return ResponseEntity.badRequest()
-	        		.body(ResponseData.builder()
-	        				.type(ResponseType.ERROR)
-	        				.code("API_ER02")
-	        				.message("Invalid parameter")
-	        				.build());
-	    }
+		if (!departmentExists(updateInfoRequest.getDepartmentId())) {
+			log.debug("Bad request with department ID {}", updateInfoRequest.getDepartmentId());
 
-	    Department department = getDepartmentById(updateInfoRequest.getDepartmentId());
+			return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("API_ER02")
+					.message("Invalid parameter").build());
+		}
 
-	    if (updateInfoRequest.getPassword() == null) {
-	        updateUserInfoWithoutPassword(user, department, updateInfoRequest.getFullName());
-	    } else {
-	        if (!isPasswordValid(updateInfoRequest.getPassword(), user.getPassword())) {
-	        	
-	        	log.info("{} of entered password not match", user.getFullName());
-	        	
-	            return ResponseEntity.badRequest().body(
-	            		ResponseData.builder()
-	            		.type(ResponseType.ERROR)
-	            		.code("API_ER04")
-	            		.message("Password not match")
-	            		.build());
-	        }
-	       
-	        updateUserPassword(user, updateInfoRequest.getPassword());
-	    }
+		Department department = getDepartmentById(updateInfoRequest.getDepartmentId());
 
-	    updateCommuterPass(user, userDetailsImpl.getId(), updateInfoRequest.getCommuterPass());
+		if (updateInfoRequest.getPassword() == null) {
+			updateUserInfoWithoutPassword(user, department, updateInfoRequest.getFullName());
+		} else {
+			if (!isPasswordValid(updateInfoRequest.getPassword(), user.getPassword())) {
 
-	    user.setDepartment(department);
-	    user.setFullName(updateInfoRequest.getFullName());
-	    userRepository.save(user);
+				log.info("{} of entered password not match", user.getFullName());
 
+<<<<<<< HEAD
 	    return ResponseEntity.ok().body(
 	    		ResponseData.builder()
 	    		.type(ResponseType.INFO)
 	    		.code("")
 	    		.message("Update successfull")
 	    		.build());
+=======
+				return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("API_ER04")
+						.message("Password not match").build());
+			}
+
+			updateUserPassword(user, updateInfoRequest.getPassword());
+		}
+
+		updateCommuterPass(user, userDetailsImpl.getId(), updateInfoRequest.getCommuterPass());
+
+		user.setDepartment(department);
+		user.setFullName(updateInfoRequest.getFullName());
+		userRepository.save(user);
+
+		return ResponseEntity.ok()
+				.body(ResponseData.builder().type(ResponseType.INFO).code("200").message("Update successfull").build());
+	}
+
+	private boolean isTokenActiveUserExists(String token) {
+		return !userRepository.findByVerifyCode(token).isEmpty();
+>>>>>>> 4ff8b62ae9a1f1b7b3bf74b8f032c4f316fd29ec
 	}
 
 	private User getUserByEmail(String email) {
-	    return userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
+		return userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
 	}
 
 	private boolean departmentExists(Integer departmentId) {
-	    return departmentRepository.existsById(departmentId);
+		return departmentRepository.existsById(departmentId);
 	}
 
 	private Department getDepartmentById(Integer departmentId) {
-	    return departmentRepository.findById(departmentId)
-	            .orElseThrow(() -> new IllegalArgumentException("Department not found"));
+		return departmentRepository.findById(departmentId)
+				.orElseThrow(() -> new IllegalArgumentException("Department not found"));
 	}
 
 	private boolean isPasswordValid(String password, String encodedPassword) {
-	    return encoder.matches(password, encodedPassword);
+		return encoder.matches(password, encodedPassword);
 	}
 
 	private void updateUserInfoWithoutPassword(User user, Department department, String fullName) {
-	    user.setDepartment(department);
-	    user.setFullName(fullName);
+		user.setDepartment(department);
+		user.setFullName(fullName);
 	}
 
 	private void updateUserPassword(User user, String password) {
-	    user.setPassword(encoder.encode(password));
+		user.setPassword(encoder.encode(password));
 	}
 
 	private void updateCommuterPass(User user, Integer userId, CommuterPassDTO commuterPassDTO) {
+<<<<<<< HEAD
 	    if (commuterPassDTO != null) {
 	        String viaDetail = commuterPassDTO.getViaDetail().toString();
 
@@ -158,9 +161,22 @@ public class UserServiceImpl implements UserService {
 	        commuterPass.setUser(new User(userId));
 	        user.setCommuterPass(commuterPass);
 	    }
+=======
+		if (commuterPassDTO != null) {
+			String via = commuterPassDTO.getVia().toString();
+			String viaDetail = commuterPassDTO.getViaDetail().toString();
+
+			CommuterPass commuterPass = commuterPassRepo.findByUserId(userId).orElse(new CommuterPass());
+			commuterPass.setDeparture(commuterPassDTO.getDeparture());
+			commuterPass.setDestination(commuterPassDTO.getDestination());
+			commuterPass.setVia(via);
+			commuterPass.setViaDetail(viaDetail);
+			commuterPass.setUser(new User(userId));
+			user.setCommuterPass(commuterPass);
+		}
+>>>>>>> 4ff8b62ae9a1f1b7b3bf74b8f032c4f316fd29ec
 	}
 
-	
 	@Override
 	public User getUser(String email) {
 		return userRepository.findByEmail(email).get();
@@ -171,13 +187,9 @@ public class UserServiceImpl implements UserService {
 
 		if (!userRepository.existsByEmail(passwordResetEmailRequest.getEmail())) {
 			log.info("Not found email : {}", passwordResetEmailRequest.getEmail());
-			
-			return ResponseEntity.badRequest().body(
-					ResponseData.builder()
-					.type(ResponseType.ERROR)
-					.code("API003_ER")
-					.message("This entered email does not exist")
-					.build());
+
+			return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("API003_ER")
+					.message("This entered email does not exist").build());
 
 		}
 
@@ -185,62 +197,78 @@ public class UserServiceImpl implements UserService {
 		user = userRepository.findByEmail(passwordResetEmailRequest.getEmail()).get();
 
 		if (user.getStatus() == 0) {
-			return ResponseEntity.badRequest()
-					.body(ResponseData.builder()
-							.type(ResponseType.ERROR)
-							.code("API001_ER02")
-							.message("This account is not active yet")
-							.build());
+			return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("API001_ER02")
+					.message("This account is not active yet").build());
 		}
-		user.setVerifyCode(UUID.randomUUID().toString());
+		String tokenToResetPassword = jwtUtils.generateTokenToResetPassword(user.getEmail());
+
+		user.setVerifyCode(tokenToResetPassword);
 		userRepository.save(user);
 
 		emailService.sendResetPasswordViaEmail(passwordResetEmailRequest.getEmail(), user.getVerifyCode());
 
+<<<<<<< HEAD
 		return ResponseEntity.ok()
 				.body(ResponseData.builder()
 						.type(ResponseType.INFO)
 						.code("")
 						.message("Verify mail has sent")
 						.build());
+=======
+		return ResponseEntity.ok().body(
+				ResponseData.builder().type(ResponseType.INFO).code("200").message("Verify mail has sent").build());
+>>>>>>> 4ff8b62ae9a1f1b7b3bf74b8f032c4f316fd29ec
 	}
 
 	@Override
 	public ResponseEntity<?> resetPassword(PasswordResetRequest passwordResetRequest) {
 		// TODO Auto-generated method stub
-		if (userRepository.findByVerifyCode(passwordResetRequest.getToken()).isEmpty()) {
-			log.info("Verify code does not exist : {}", passwordResetRequest.getToken());
-			
-			return ResponseEntity.badRequest().body(
-					ResponseData.builder()
-					.type(ResponseType.ERROR)
-					.code("API005_ERAPI005_ER")
-					.message("Verify code incorrect")
-					.build());
+
+		String tokenResetPassword = passwordResetRequest.getAuthToken();
+
+		if (!isTokenResetPasswordExists(tokenResetPassword)) {
+			log.info("Verify code does not exist : {}", passwordResetRequest.getAuthToken());
+
+			return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("API005_ER")
+					.message("Verify code incorrect").build());
 		}
+
+		if (!jwtUtils.validateJwtToken(tokenResetPassword)) {
+			log.info("Verify code has expired : {}", passwordResetRequest.getAuthToken());
+
+			return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("XXXX")
+					.message("Verify code has expired").build());
+		}
+
 		User user = new User();
-		user = userRepository.findByVerifyCode(passwordResetRequest.getToken()).get();
+		user = userRepository.findByVerifyCode(tokenResetPassword).get();
 
 		if (user.getStatus() == 0) {
-			return ResponseEntity.badRequest().body(
-					ResponseData.builder()
-					.type(ResponseType.ERROR)
-					.code("API001_ER02")
-					.message("This account is not active yet")
-					.build());
+			return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("API001_ER02")
+					.message("This account is not active yet").build());
 		}
 
 		user.setPassword(encoder.encode(passwordResetRequest.getNewPassword()));
 		user.setVerifyCode(null);
-		
-		log.info("{} reset password successfully!",user.getFullName());
+		userRepository.save(user);
 
+<<<<<<< HEAD
 		return ResponseEntity.ok()
 				.body(ResponseData.builder()
 						.type(ResponseType.INFO)
 						.code("")
 						.message("Reset password successfully!")
 						.build());
+=======
+		log.info("{} reset password successfully!", user.getFullName());
+
+		return ResponseEntity.ok().body(ResponseData.builder().type(ResponseType.INFO).code("200")
+				.message("Reset password successfully!").build());
+	}
+
+	private boolean isTokenResetPasswordExists(String token) {
+		return !userRepository.findByVerifyCode(token).isEmpty();
+>>>>>>> 4ff8b62ae9a1f1b7b3bf74b8f032c4f316fd29ec
 	}
 
 }
