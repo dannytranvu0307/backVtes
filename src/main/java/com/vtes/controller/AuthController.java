@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vtes.entity.Department;
 import com.vtes.entity.RefreshToken;
 import com.vtes.entity.User;
+import com.vtes.exception.AuthenticationFailedException;
 import com.vtes.exception.TokenRefreshException;
 import com.vtes.payload.request.LoginRequest;
 import com.vtes.payload.request.SignupRequest;
@@ -64,10 +65,16 @@ public class AuthController {
 
 	@PostMapping("/login")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest,
-			HttpServletResponse httpServletResponse) {
+			HttpServletResponse httpServletResponse) throws AuthenticationFailedException {
 
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+		Authentication authentication = null;
+		try {
+			authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+
+		} catch (Exception e) {
+			throw new AuthenticationFailedException();
+		}
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -75,8 +82,11 @@ public class AuthController {
 		User user = new User();
 		user = userRepository.findById(userDetails.getId()).get();
 		if (user.getStatus() == 0) {
-			return ResponseEntity.badRequest().body(ResponseData.builder().code("API001_ER02").type(ResponseType.ERROR)
-					.message("This account is not active yet").build());
+			return ResponseEntity.badRequest()
+					.body(ResponseData.builder()
+							.code("API001_ER02")
+							.type(ResponseType.ERROR)
+							.message("This account is not active yet").build());
 		}
 
 		String jwt = jwtUtils.generateJwtToken(userDetails);
@@ -89,11 +99,12 @@ public class AuthController {
 			cookieUtils.createAccessTokenCookie(httpServletResponse, jwt);
 		}
 
-		return ResponseEntity.ok().body(ResponseData.builder()
-									.code("")
-									.type(ResponseType.INFO)
-									.message("Authentication successfull")
-									.build());
+		return ResponseEntity.ok().body(
+				ResponseData.builder()
+					.code("").
+					type(ResponseType.INFO)
+					.message("Authentication successfull")
+					.build());
 
 	}
 
@@ -101,13 +112,21 @@ public class AuthController {
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 
 		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-			return ResponseEntity.badRequest().body(ResponseData.builder().code("API002_ER").type(ResponseType.ERROR)
-					.message("This email has already been used").build());
+			return ResponseEntity.badRequest()
+					.body(ResponseData.builder()
+							.code("API002_ER")
+							.type(ResponseType.ERROR)
+							.message("This email has already been used")
+							.build());
 		}
 
 		if (departmentRepository.findById(signUpRequest.getDepartmentId()).isEmpty()) {
-			return ResponseEntity.badRequest().body(ResponseData.builder().code("API_ER04").type(ResponseType.ERROR)
-					.message("Department does not exits").build());
+			return ResponseEntity.badRequest()
+					.body(ResponseData.builder()
+							.code("API_ER04")
+							.type(ResponseType.ERROR)
+							.message("Department ID is required")
+							.build());
 		}
 
 		Department department = new Department();
@@ -119,12 +138,13 @@ public class AuthController {
 		String tokenActive = jwtUtils.generateTokenToActiveUser(signUpRequest.getEmail());
 		user.setVerifyCode(tokenActive);
 		userRepository.save(user);
+		emailService.sendRegistrationUserConfirm(signUpRequest.getEmail(), tokenActive);
 
-		return ResponseEntity.ok().body(ResponseData.builder()
-									.code("")
-									.type(ResponseType.INFO)
-									.message("Register successfull")
-									.build());
+		return ResponseEntity.ok()
+				.body(ResponseData.builder()
+						.code("")
+						.type(ResponseType.INFO)
+						.message("Register successfull").build());
 
 	}
 
@@ -136,12 +156,8 @@ public class AuthController {
 					String token = jwtUtils.generateTokenFromEmail(user.getEmail());
 					cookieUtils.createAccessTokenCookie(httpServletResponse, token);
 
-					return ResponseEntity.ok()
-							.body(ResponseData.builder()
-									.type(ResponseType.INFO)
-									.code("")
-									.message("Jwt Token recreated")
-									.build());
+					return ResponseEntity.ok().body(ResponseData.builder().type(ResponseType.INFO).code("")
+							.message("Jwt Token recreated").build());
 
 				})
 				.orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
@@ -156,12 +172,8 @@ public class AuthController {
 		cookieUtils.deleteCookie(httpServletRequest, httpServletResponse, "refreshToken");
 		Integer userId = userDetails.getId();
 		refreshTokenService.deleteByUserId(userId);
-		return ResponseEntity.ok().body(ResponseData.builder()
-										.type(ResponseType.INFO)
-										.code("")
-										.message("Jwt Token deleted")
-										.build())
-										;
+		return ResponseEntity.ok()
+				.body(ResponseData.builder().type(ResponseType.INFO).code("").message("Jwt Token deleted").build());
 
 	}
 

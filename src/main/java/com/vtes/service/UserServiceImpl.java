@@ -50,15 +50,22 @@ public class UserServiceImpl implements UserService {
 		User user = new User();
 
 		if (!isTokenActiveUserExists(token)) {
-			return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("API005_ER")
-					.message("Verify code incorrect").build());
+			return ResponseEntity.badRequest()
+					.body(ResponseData.builder()
+							.type(ResponseType.ERROR)
+							.code("API005_ER")
+							.message("Verify code incorrect")
+							.build());
 		}
 
 		if (!jwtUtils.validateJwtToken(token)) {
 			log.info("Verify code has expired : {}", token);
 
-			return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("XXXX")
-					.message("Verify code has expired").build());
+			return ResponseEntity.badRequest()
+					.body(ResponseData.builder()
+							.type(ResponseType.ERROR)
+							.code("XXXX")
+							.message("Verify code has expired").build());
 		}
 
 		user = userRepository.findByVerifyCode(token).get();
