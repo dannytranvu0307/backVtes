@@ -25,17 +25,16 @@ DROP TABLE IF EXISTS `tbl_commuter_pass`;
 CREATE TABLE `tbl_commuter_pass` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `USER_ID` int NOT NULL,
-  `DEPARTURE` varchar(256) NOT NULL,
-  `DESTINATION` varchar(256) NOT NULL,
-  `VIA` varchar(1024) NOT NULL,
-  `VIA_DETAIL` varchar(1024) NOT NULL,
+  `DEPARTURE` varchar(128) NOT NULL,
+  `DESTINATION` varchar(128) NOT NULL,
+  `VIA_DETAIL` varchar(512) NOT NULL,
   `CREATE_DT` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `UPDATE_DT` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `DELETE_FLAG` tinyint(1) NOT NULL DEFAULT '0',
+  `UPDATE_DT` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `DELETE_FLAG` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`ID`),
   KEY `tbl_commuter_pass_ibfk_1` (`USER_ID`),
   CONSTRAINT `tbl_commuter_pass_ibfk_1` FOREIGN KEY (`USER_ID`) REFERENCES `tbl_user` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,6 +43,7 @@ CREATE TABLE `tbl_commuter_pass` (
 
 LOCK TABLES `tbl_commuter_pass` WRITE;
 /*!40000 ALTER TABLE `tbl_commuter_pass` DISABLE KEYS */;
+INSERT INTO `tbl_commuter_pass` VALUES (2,4,'上井草sdf','西武新宿','[{\"goal\":\"00004927\",\"start\":\"00003913\",\"link\":\"00000721\",\"direction\":\"up\"}]','2023-05-23 08:28:14','2023-05-25 05:57:59',NULL);
 /*!40000 ALTER TABLE `tbl_commuter_pass` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -56,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-23 15:18:07
+-- Dump completed on 2023-05-25 16:50:50

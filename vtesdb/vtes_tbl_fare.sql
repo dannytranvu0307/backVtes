@@ -26,20 +26,21 @@ CREATE TABLE `tbl_fare` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `USER_ID` int NOT NULL,
   `VISIT_LOCATION` varchar(256) NOT NULL,
-  `DEPARTURE` varchar(256) NOT NULL,
-  `DESTINATION` varchar(256) NOT NULL,
-  `PAY_METHOD` tinyint(1) NOT NULL,
-  `USE_CP` tinyint(1) NOT NULL,
-  `ROUND_TRIP` tinyint(1) NOT NULL,
+  `DEPARTURE` varchar(128) NOT NULL,
+  `DESTINATION` varchar(128) NOT NULL,
+  `PAY_METHOD` varchar(30) NOT NULL,
+  `USE_CP_FLAG` tinyint(1) NOT NULL,
+  `IS_ROUND_TRIP` tinyint(1) NOT NULL,
   `FEE` int NOT NULL,
-  `TRANSPORTATION` tinyint(1) NOT NULL,
-  `VISIT_DT` datetime NOT NULL,
+  `TRANSPORTATION` varchar(30) NOT NULL,
+  `VISIT_DT` timestamp NOT NULL,
   `CREATE_DT` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `UPDATE_DT` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `DELETE_FLAG` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`ID`),
   KEY `tbl_fare_ibfk_1` (`USER_ID`),
   CONSTRAINT `tbl_fare_ibfk_1` FOREIGN KEY (`USER_ID`) REFERENCES `tbl_user` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -48,6 +49,7 @@ CREATE TABLE `tbl_fare` (
 
 LOCK TABLES `tbl_fare` WRITE;
 /*!40000 ALTER TABLE `tbl_fare` DISABLE KEYS */;
+INSERT INTO `tbl_fare` VALUES (2,4,'VTI','曙橋駅','船橋駅','1',1,1,2000,'1','2023-04-05 00:00:00',NULL,NULL,NULL),(4,4,'VTI','曙橋駅','船橋駅','1',1,1,2000,'電車','2023-04-05 00:00:00',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `tbl_fare` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -60,4 +62,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-23 15:18:07
+-- Dump completed on 2023-05-25 16:50:50

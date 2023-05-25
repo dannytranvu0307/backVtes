@@ -16,11 +16,11 @@ import lombok.Setter;
 public class RouteSectionItem {
 	private String type;
 	
-	@Getter(onMethod_ = {@JsonGetter("nodeId")})
+	@Getter(onMethod_ = {@JsonGetter("stationCode")})
 	@Setter(onMethod_ = {@JsonSetter("node_id")})
 	private String nodeId;
 	
-	@Getter(onMethod_ = {@JsonGetter("name")})
+	@Getter(onMethod_ = {@JsonGetter("StationName")})
 	@Setter(onMethod_ = {@JsonSetter("name")})
 	private String name;
 	

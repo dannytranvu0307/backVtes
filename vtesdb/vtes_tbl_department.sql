@@ -24,10 +24,10 @@ DROP TABLE IF EXISTS `tbl_department`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tbl_department` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `DEPARTMENT_NAME` varchar(64) NOT NULL,
+  `DEPARTMENT_NAME` varchar(100) NOT NULL,
   `CREATE_DATE` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `UPDATE_DT` timestamp NULL DEFAULT NULL,
-  `create_dt` datetime(6) DEFAULT NULL,
+  `UPDATE_DT` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `DELETE_FLAG` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -51,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-23 15:18:07
+-- Dump completed on 2023-05-25 16:50:50

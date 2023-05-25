@@ -39,8 +39,8 @@ public class FileApiController {
 		List<FileData> files = fileService.findByUserId(userId);
 		return ResponseEntity.ok()
 				.body(ResponseData.builder()
-						.code("200")
-						.message("")
+						.code("")
+						.message("Success")
 						.type(ResponseType.INFO)
 						.data(files)
 						.build());
@@ -54,7 +54,9 @@ public class FileApiController {
 		fileService.uploadFileToS3(getAuthenticatedUserId(), file);
 
 		return ResponseEntity.ok()
-				.body(ResponseData.builder().code("200").type(ResponseType.INFO).message("uploaded").build());
+				.body(ResponseData.builder().code("")
+						.type(ResponseType.INFO)
+						.message("File uploaded").build());
 
 	}
 

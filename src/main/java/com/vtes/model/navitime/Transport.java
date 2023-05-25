@@ -19,6 +19,9 @@ public class Transport {
 	@Getter(onMethod_ = {@JsonGetter("lineColor")} )
 	@Setter(onMethod_ = {@JsonSetter("color")} )
 	private String lineColor;
+	
+	@Setter(onMethod_ = {@JsonSetter("name")} )
+	@Getter(onMethod_ = {@JsonGetter("lineName")})
 	private String name;
 	private List<Link> links;
 }

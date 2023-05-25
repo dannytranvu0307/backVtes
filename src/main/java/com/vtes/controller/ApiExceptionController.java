@@ -141,7 +141,7 @@ public class ApiExceptionController {
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public ResponseData notFoundResource(EntityNotFoundException ex) {
 		return ResponseData.builder()
-				.code("404")
+				.code("")
 				.message(ex.getMessage())
 				.type(ResponseType.ERROR)
 				.build();

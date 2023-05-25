@@ -36,6 +36,6 @@ public class Department {
 	@Column(name = "`CREATE_DT`")
 	private Instant createDt;
 
-	@Column(name = "`UPDATE_DT`")
+	@Column(name = "`UPDATE_DT`") 
 	private Instant updateDt;
 }

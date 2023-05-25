@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService {
 	    return ResponseEntity.ok().body(
 	    		ResponseData.builder()
 	    		.type(ResponseType.INFO)
-	    		.code("200")
+	    		.code("")
 	    		.message("Update successfull")
 	    		.build());
 	}
@@ -149,13 +149,11 @@ public class UserServiceImpl implements UserService {
 
 	private void updateCommuterPass(User user, Integer userId, CommuterPassDTO commuterPassDTO) {
 	    if (commuterPassDTO != null) {
-	        String via = commuterPassDTO.getVia().toString();
 	        String viaDetail = commuterPassDTO.getViaDetail().toString();
 
 	        CommuterPass commuterPass = commuterPassRepo.findByUserId(userId).orElse(new CommuterPass());
 	        commuterPass.setDeparture(commuterPassDTO.getDeparture());
 	        commuterPass.setDestination(commuterPassDTO.getDestination());
-	        commuterPass.setVia(via);
 	        commuterPass.setViaDetail(viaDetail);
 	        commuterPass.setUser(new User(userId));
 	        user.setCommuterPass(commuterPass);
@@ -202,7 +200,7 @@ public class UserServiceImpl implements UserService {
 		return ResponseEntity.ok()
 				.body(ResponseData.builder()
 						.type(ResponseType.INFO)
-						.code("200")
+						.code("")
 						.message("Verify mail has sent")
 						.build());
 	}
@@ -240,7 +238,7 @@ public class UserServiceImpl implements UserService {
 		return ResponseEntity.ok()
 				.body(ResponseData.builder()
 						.type(ResponseType.INFO)
-						.code("200")
+						.code("")
 						.message("Reset password successfully!")
 						.build());
 	}

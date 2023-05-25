@@ -78,8 +78,8 @@ public class TransportAPIController {
 		
 		return ResponseEntity.ok().body(
 				ResponseData.builder()
-				.code("200")
-				.message("")
+				.code("")
+				.message("Success")
 				.type(ResponseType.INFO)
 				.data(routes)
 				.build()
@@ -93,8 +93,8 @@ public class TransportAPIController {
 		List<Station> stations = transportService.searchStationsByWord(word);
 		return ResponseEntity.ok().body(
 				ResponseData.builder()
-				.code("200")
-				.message("")
+				.code("")
+				.message("Success")
 				.type(ResponseType.INFO)
 				.data(stations)
 				.build()
@@ -115,8 +115,8 @@ public class TransportAPIController {
 		
 		return ResponseEntity.ok().body(
 				ResponseData.builder()
-				.code("200")
-				.message("")
+				.code("")
+				.message("Success")
 				.type(ResponseType.INFO)
 				.data(cpRoutes)
 				.build()

@@ -38,8 +38,8 @@ public class DepartmentController {
 		return ResponseEntity.ok()
 				.body(ResponseData.builder()
 						.type(ResponseType.INFO)
-						.code("200")
-						.message("")
+						.code("")
+						.message("Success")
 						.data(departmentResponses)
 						.build());
 	}

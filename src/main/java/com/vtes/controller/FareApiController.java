@@ -39,7 +39,7 @@ public class FareApiController {
 		
 		return ResponseEntity.ok()
 				.body(ResponseData.builder()
-						.code("200")
+						.code("")
 						.message("Fare detail saved")
 						.type(ResponseType.INFO)
 						.data(savedFare)
@@ -58,7 +58,7 @@ public class FareApiController {
 		fareService.deleteFareRecord(recordId);
 		return ResponseEntity.ok()
 				.body(ResponseData.builder()
-					.code("200")
+					.code("")
 					.message("Deleted")
 					.type(ResponseType.INFO)
 					.build());

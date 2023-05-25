@@ -69,6 +69,9 @@ public class User {
 	@Column(name = "`UPDATE_DT`")
 	private Instant updateDt;
 	
+	@Column(name = "DELETE_FLAG")
+	private Boolean deleteFlag;
+	
 	public User(Integer id) {
 		super();
 		this.id = id;

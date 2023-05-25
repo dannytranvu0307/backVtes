@@ -45,12 +45,12 @@ public class Fare {
 	private String destination;
 
 	@Column(name = "PAY_METHOD")
-	private Integer payMethod;
+	private String payMethod;
 
-	@Column(name = "USE_CP")
+	@Column(name = "USE_CP_FLAG")
 	private Boolean useCommuterPass;
 
-	@Column(name = "ROUND_TRIP")
+	@Column(name = "IS_ROUND_TRIP")
 	private Boolean isRoundTrip;
 
 	@Column(name = "FEE")

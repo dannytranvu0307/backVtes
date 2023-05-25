@@ -38,9 +38,6 @@ public class CommuterPass {
 	@Column(name = "DESTINATION")
 	private String destination;
 	
-	@Column(name = "VIA")
-	private String via;
-	
 	@Column(name = "VIA_DETAIL")
 	private String viaDetail;
 	
@@ -48,11 +45,10 @@ public class CommuterPass {
 	@ColumnDefault("false")
 	private Boolean deleteFlag;
 
-	public CommuterPass(String departure, String destination, String via, String viaDetail) {
+	public CommuterPass(String departure, String destination, String viaDetail) {
 		super();
 		this.departure = departure;
 		this.destination = destination;
-		this.via = via;
 		this.viaDetail = viaDetail;
 	}
 	

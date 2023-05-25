@@ -49,7 +49,7 @@ public class FareService {
 				.destination(fare.getDestination())
 				.fee(fare.getFee())
 				.payMethod(fare.getPayMethod())
-				.commuterPass(fare.getUseCommuterPass())
+				.useCommuterPass(fare.getUseCommuterPass())
 				.isRoundTrip(fare.getIsRoundTrip())
 				.transportation(fare.getTransportation())
 				.visitDate(fare.getVisitDate())

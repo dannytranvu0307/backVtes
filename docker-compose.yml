@@ -25,8 +25,7 @@ services:
     networks:
       - backend
 networks:
-  backend: 
-    external: true
+  backend: {}
 volumes:
   mysql-vtes-data:
   mysql-config:

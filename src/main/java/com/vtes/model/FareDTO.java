@@ -36,10 +36,10 @@ public class FareDTO {
 	private String destination;
 
 	@NotNull
-	private Integer payMethod;
+	private String payMethod;
 
 	@NotNull
-	private Boolean commuterPass;
+	private Boolean useCommuterPass;
 
 	@NotNull
 	private Boolean isRoundTrip;
@@ -56,7 +56,7 @@ public class FareDTO {
 
 	public Fare convertToFare() throws ParseException {
 		return Fare.builder().id(id).user(new User(userId)).departure(departure).visitLocation(visitLocation)
-				.destination(destination).fee(fee).payMethod(payMethod).useCommuterPass(commuterPass)
+				.destination(destination).fee(fee).payMethod(payMethod).useCommuterPass(useCommuterPass)
 				.isRoundTrip(isRoundTrip).transportation(transportation).visitDate(visitDate).build();
 	}
 

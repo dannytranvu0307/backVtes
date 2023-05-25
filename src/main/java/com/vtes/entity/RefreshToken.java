@@ -36,5 +36,8 @@ public class RefreshToken {
 
 	@Column(name = "EXPIRY_DATE", nullable = false)
 	private Instant expiryDate;
+	
+	@Column(name = "DELETE_FLAG", nullable = false)
+	private Boolean deleteFlag;
 
 }

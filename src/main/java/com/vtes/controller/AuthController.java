@@ -97,7 +97,7 @@ public class AuthController {
 		}
 
 		return ResponseEntity.ok().body(ResponseData.builder()
-									.code("200")
+									.code("")
 									.type(ResponseType.INFO)
 									.message("Authentication successfull")
 									.build());
@@ -136,7 +136,7 @@ public class AuthController {
 		userRepository.save(user);
 
 		return ResponseEntity.ok().body(ResponseData.builder()
-									.code("200")
+									.code("")
 									.type(ResponseType.INFO)
 									.message("Register successfull")
 									.build());
@@ -153,7 +153,7 @@ public class AuthController {
 					return ResponseEntity.ok()
 							.body(ResponseData.builder()
 									.type(ResponseType.INFO)
-									.code("200")
+									.code("")
 									.message("Jwt Token recreated")
 									.build());
 				})
@@ -171,7 +171,7 @@ public class AuthController {
 		refreshTokenService.deleteByUserId(userId);
 		return ResponseEntity.ok().body(ResponseData.builder()
 										.type(ResponseType.INFO)
-										.code("200")
+										.code("")
 										.message("Jwt Token deleted")
 										.build())
 										;

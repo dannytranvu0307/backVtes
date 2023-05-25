@@ -17,9 +17,11 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_NULL)
 public class RouteSummaryNode {
+	@Setter(onMethod_ = {@JsonSetter("name")} )
+	@Getter(onMethod_ = {@JsonGetter("stationName")})
 	private String name;
 	
-	@Getter(onMethod_ = {@JsonGetter("nodeId")})
+	@Getter(onMethod_ = {@JsonGetter("stationCode")})
 	@Setter(onMethod_ = {@JsonSetter("node_id")})
 	private String nodeId;
 	
