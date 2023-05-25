@@ -128,7 +128,7 @@ public class AuthController {
 
 	}
 
-	@GetMapping("/refresh-token")
+	@GetMapping("/refreshToken")
 	public ResponseEntity<?> refreshtoken(HttpServletRequest request, HttpServletResponse httpServletResponse) {
 		String requestRefreshToken = cookieUtils.getRefreshTokenFromCookie(request);
 		return refreshTokenService.findByToken(requestRefreshToken).map(refreshTokenService::verifyExpiration)
