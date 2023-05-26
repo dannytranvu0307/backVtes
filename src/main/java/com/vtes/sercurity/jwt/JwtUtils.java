@@ -18,8 +18,11 @@ public class JwtUtils {
 	@Value("${vtes.app.jwtSecret}")
 	private String jwtSecret;
 
-	@Value("${vtes.app.jwtExpirationMs}")
-	private int jwtExpirationMs;
+	@Value("${vtes.app.jwtExpiration}")
+	private Integer jwtExpiration;
+	
+	@Value("${vtes.app.verifyCodeExpiration}")
+	private Integer verifyCodeExpiration;
 
 	public String generateJwtToken(UserDetailsImpl userPrincipal) {
 		return generateTokenFromEmail(userPrincipal.getEmail());
@@ -27,19 +30,19 @@ public class JwtUtils {
 
 	public String generateTokenFromEmail(String email) {
 		return Jwts.builder().setSubject(email).setIssuedAt(new Date())
-				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+				.setExpiration(new Date((new Date()).getTime() + jwtExpiration*1000))
 				.signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
 	}
 
 	public String generateTokenToActiveUser(String email) {
 		return Jwts.builder().setSubject(email).setIssuedAt(new Date())
-				.setExpiration(new Date((new Date()).getTime() + 86400000)).signWith(SignatureAlgorithm.HS512, jwtSecret)
+				.setExpiration(new Date((new Date()).getTime() + verifyCodeExpiration*1000)).signWith(SignatureAlgorithm.HS512, jwtSecret)
 				.compact();
 	}
 
 	public String generateTokenToResetPassword(String email) {
 		return Jwts.builder().setSubject(email).setIssuedAt(new Date())
-				.setExpiration(new Date((new Date()).getTime() + 1800000)).signWith(SignatureAlgorithm.HS512, jwtSecret)
+				.setExpiration(new Date((new Date()).getTime() + verifyCodeExpiration*1000)).signWith(SignatureAlgorithm.HS512, jwtSecret)
 				.compact();
 	}
 

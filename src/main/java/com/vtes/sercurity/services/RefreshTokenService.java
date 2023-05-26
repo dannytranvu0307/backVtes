@@ -16,8 +16,8 @@ import com.vtes.repository.UserRepository;
 
 @Service
 public class RefreshTokenService {
-	@Value("${vtes.app.jwtRefreshExpirationMs}")
-	private Long refreshTokenDurationMs;
+	@Value("${vtes.app.jwtRefreshExpiration}")
+	private Long refreshTokenDuration;
 
 	@Autowired
 	private RefreshTokenRepository refreshTokenRepository;
@@ -33,13 +33,13 @@ public class RefreshTokenService {
 		RefreshToken refreshToken = new RefreshToken();
 		if (refreshTokenRepository.findByUserId(userId).isEmpty()) {
 			refreshToken.setUser(userRepository.findById(userId).get());
-			refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
+			refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDuration*1000));
 			refreshToken.setToken(UUID.randomUUID().toString());
 			refreshToken = refreshTokenRepository.save(refreshToken);
 			return refreshToken;
 		} else {
 			refreshToken = refreshTokenRepository.findByUserId(userId).get();
-			refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
+			refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDuration*1000));
 			refreshToken.setToken(UUID.randomUUID().toString());
 			refreshToken = refreshTokenRepository.save(refreshToken);
 			return refreshToken;
