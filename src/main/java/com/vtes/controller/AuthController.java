@@ -1,5 +1,7 @@
 package com.vtes.controller;
 
+import java.time.Instant;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -91,7 +93,7 @@ public class AuthController {
 
 		String jwt = jwtUtils.generateJwtToken(userDetails);
 
-		if (loginRequest.getRemember()) {
+		if (loginRequest.isRemember()) {
 			RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
 			cookieUtils.createAccessTokenCookie(httpServletResponse, jwt);
 			cookieUtils.createRefreshTokenCookie(httpServletResponse, refreshToken.getToken());
@@ -137,6 +139,8 @@ public class AuthController {
 		user.setStatus((short) 0);
 		String tokenActive = jwtUtils.generateTokenToActiveUser(signUpRequest.getEmail());
 		user.setVerifyCode(tokenActive);
+		user.setCreateDt(Instant.now());
+		user.setDeleteFlag(false);
 		userRepository.save(user);
 		emailService.sendRegistrationUserConfirm(signUpRequest.getEmail(), tokenActive);
 

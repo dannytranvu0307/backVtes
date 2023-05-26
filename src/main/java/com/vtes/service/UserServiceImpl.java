@@ -1,5 +1,9 @@
 package com.vtes.service;
 
+import java.time.Instant;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -50,22 +54,15 @@ public class UserServiceImpl implements UserService {
 		User user = new User();
 
 		if (!isTokenActiveUserExists(token)) {
-			return ResponseEntity.badRequest()
-					.body(ResponseData.builder()
-							.type(ResponseType.ERROR)
-							.code("API005_ER")
-							.message("Verify code incorrect")
-							.build());
+			return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("API005_ER")
+					.message("Verify code incorrect").build());
 		}
 
 		if (!jwtUtils.validateJwtToken(token)) {
 			log.info("Verify code has expired : {}", token);
 
-			return ResponseEntity.badRequest()
-					.body(ResponseData.builder()
-							.type(ResponseType.ERROR)
-							.code("XXXX")
-							.message("Verify code has expired").build());
+			return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("XXXX")
+					.message("Verify code has expired").build());
 		}
 
 		user = userRepository.findByVerifyCode(token).get();
@@ -81,9 +78,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<?> updateUser(UpdateInfoRequest updateInfoRequest, UserDetailsImpl userDetailsImpl) {
+	public ResponseEntity<?> updateUser(@Valid UpdateInfoRequest updateInfoRequest, UserDetailsImpl userDetailsImpl) {
 		User user = getUserByEmail(userDetailsImpl.getEmail());
-
 		if (!departmentExists(updateInfoRequest.getDepartmentId())) {
 			log.debug("Bad request with department ID {}", updateInfoRequest.getDepartmentId());
 
@@ -100,13 +96,8 @@ public class UserServiceImpl implements UserService {
 
 				log.info("{} of entered password not match", user.getFullName());
 
-
-	    return ResponseEntity.ok().body(
-	    		ResponseData.builder()
-	    		.type(ResponseType.INFO)
-	    		.code("")
-	    		.message("Update successfull")
-	    		.build());
+				return ResponseEntity.ok().body(
+						ResponseData.builder().type(ResponseType.INFO).code("").message("Update successfull").build());
 			}
 
 			updateUserPassword(user, updateInfoRequest.getPassword());
@@ -116,6 +107,7 @@ public class UserServiceImpl implements UserService {
 
 		user.setDepartment(department);
 		user.setFullName(updateInfoRequest.getFullName());
+		user.setUpdateDt(Instant.now());
 		userRepository.save(user);
 
 		return ResponseEntity.ok()
@@ -153,16 +145,16 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void updateCommuterPass(User user, Integer userId, CommuterPassDTO commuterPassDTO) {
-	    if (commuterPassDTO != null) {
-	        String viaDetail = commuterPassDTO.getViaDetail().toString();
+		if (commuterPassDTO != null) {
+			String viaDetail = commuterPassDTO.getViaDetail().toString();
 
-	        CommuterPass commuterPass = commuterPassRepo.findByUserId(userId).orElse(new CommuterPass());
-	        commuterPass.setDeparture(commuterPassDTO.getDeparture());
-	        commuterPass.setDestination(commuterPassDTO.getDestination());
-	        commuterPass.setViaDetail(viaDetail);
-	        commuterPass.setUser(new User(userId));
-	        user.setCommuterPass(commuterPass);
-	    }
+			CommuterPass commuterPass = commuterPassRepo.findByUserId(userId).orElse(new CommuterPass());
+			commuterPass.setDeparture(commuterPassDTO.getDeparture());
+			commuterPass.setDestination(commuterPassDTO.getDestination());
+			commuterPass.setViaDetail(viaDetail);
+			commuterPass.setUser(new User(userId));
+			user.setCommuterPass(commuterPass);
+		}
 	}
 
 	@Override
@@ -196,11 +188,7 @@ public class UserServiceImpl implements UserService {
 		emailService.sendResetPasswordViaEmail(passwordResetEmailRequest.getEmail(), user.getVerifyCode());
 
 		return ResponseEntity.ok()
-				.body(ResponseData.builder()
-						.type(ResponseType.INFO)
-						.code("")
-						.message("Verify mail has sent")
-						.build());
+				.body(ResponseData.builder().type(ResponseType.INFO).code("").message("Verify mail has sent").build());
 	}
 
 	@Override
@@ -236,12 +224,8 @@ public class UserServiceImpl implements UserService {
 		userRepository.save(user);
 
 		log.info("{} reset password successfully!", user.getFullName());
-		return ResponseEntity.ok()
-				.body(ResponseData.builder()
-						.type(ResponseType.INFO)
-						.code("")
-						.message("Reset password successfully!")
-						.build());
+		return ResponseEntity.ok().body(ResponseData.builder().type(ResponseType.INFO).code("")
+				.message("Reset password successfully!").build());
 
 	}
 

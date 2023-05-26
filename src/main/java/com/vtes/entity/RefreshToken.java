@@ -1,6 +1,5 @@
 package com.vtes.entity;
 
-
 import java.time.Instant;
 
 import javax.persistence.Column;
@@ -10,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -36,8 +36,19 @@ public class RefreshToken {
 
 	@Column(name = "EXPIRY_DATE", nullable = false)
 	private Instant expiryDate;
-	
+
+	@Column(name = "`CREATE_DT`")
+	private Instant createDt;
+
+	@Column(name = "`UPDATE_DT`")
+	private Instant updateDt;
+
 	@Column(name = "DELETE_FLAG", nullable = false)
 	private Boolean deleteFlag;
+
+	@PreUpdate
+	public void preUpdate() {
+		this.updateDt = Instant.now();
+	}
 
 }

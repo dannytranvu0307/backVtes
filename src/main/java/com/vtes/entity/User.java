@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -43,17 +44,17 @@ public class User {
 	@ManyToOne
 	@JoinColumn(name = "DEPARTMENT_ID", referencedColumnName = "ID")
 	private Department department;
-	
-	@OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
 	private CommuterPass commuterPass;
-	
+
 	@OneToMany(mappedBy = "user")
 	private List<FileData> files;
-	
+
 	@OneToMany(mappedBy = "user")
 //	@JsonManagedReference
 	private List<Fare> fares;
-	
+
 	@OneToOne(mappedBy = "user")
 	private RefreshToken refreshToken;
 
@@ -68,10 +69,10 @@ public class User {
 
 	@Column(name = "`UPDATE_DT`")
 	private Instant updateDt;
-	
+
 	@Column(name = "DELETE_FLAG")
 	private Boolean deleteFlag;
-	
+
 	public User(Integer id) {
 		super();
 		this.id = id;
@@ -83,6 +84,11 @@ public class User {
 		this.email = email;
 		this.password = password;
 		this.department = department;
+	}
+
+	@PreUpdate
+	public void preUpdate() {
+		this.updateDt = Instant.now();
 	}
 
 }

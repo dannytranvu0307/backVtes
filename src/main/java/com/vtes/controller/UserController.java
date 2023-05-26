@@ -58,18 +58,12 @@ public class UserController {
 		UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
 				.getPrincipal();
 
-		User user = new User();
-		user = userService.getUser(userDetails.getEmail());
+		User user = userService.getUser(userDetails.getEmail());
 
 		UserResponse userRespons = modelMapper.map(user, new TypeToken<UserResponse>() {
 		}.getType());
-		return ResponseEntity.ok()
-				.body(ResponseData.builder()
-						.type(ResponseType.INFO)
-						.code("")
-						.message("Success")
-						.data(userRespons)
-						.build());
+		return ResponseEntity.ok().body(
+				ResponseData.builder().type(ResponseType.INFO).code("").message("Success").data(userRespons).build());
 	}
 
 	@PostMapping("/active")
