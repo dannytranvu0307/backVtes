@@ -39,6 +39,13 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class TransportInfomationServiceImpl implements TransportInfomationService {
+	private static final String STATION ="station";
+	private static final String STATION_JA ="駅";
+	private static final String ITEMS ="items";
+	private static final String DATE_FORMAT ="yyyy-MM-dd'T'HH:mm:ss";
+	private static final String POINT ="point";
+	private static final String MOVE ="move";
+	
 	@Autowired
 	private TotalNaviApiConnect totalnavi;
 
@@ -50,7 +57,7 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 
 	public List<Route> searchRoutes(Map<String, Object> params) {
 		List<Route> items = null;
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 		String formattedDateTime = sdf.format(new Date());
 		
 		params.put("start_time", formattedDateTime);
@@ -60,7 +67,7 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 
 		try {
 			JsonNode node = objectMapper.readTree(jsonString);
-			JsonNode itemsNode = node.get("items");
+			JsonNode itemsNode = node.get(ITEMS);
 
 			items = objectMapper.readValue(itemsNode.toString(), new TypeReference<List<Route>>() {
 			});
@@ -71,6 +78,7 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 		return items;
 	}
 
+	//Call the api to a 3rd party and filter out the points that are train stations
 	public List<Station> searchStationsByWord(String word) {
 
 		List<Station> responseData = null;
@@ -79,17 +87,19 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 
 		try {
 			JsonNode node = objectMapper.readTree(jsonString);
-			JsonNode itemsNode = node.get("items");
+			JsonNode itemsNode = node.get(ITEMS);
 			responseData = objectMapper.readValue(itemsNode.toString(), new TypeReference<List<Station>>() {
 			});
 		} catch (JsonProcessingException e) {
 			log.error("Has error when call 3rd API");
 		}
-		List<Station> stations = new ArrayList<>();
-		if (responseData != null) {
-			stations = responseData.stream().filter(s -> s.getTypes().contains("station")).collect(Collectors.toList());
-		}
-
+		  List<Station> stations = new ArrayList<>();
+		    if (responseData != null) {
+		        stations = responseData.stream()
+		                .peek(s -> s.setName(s.getName() + STATION_JA))
+		                .filter(s -> s.getTypes().contains(STATION))
+		                .collect(Collectors.toList());
+		    }
 		return stations;
 	}
 
@@ -99,6 +109,7 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 		
 	}
 	
+	//Get route details and convert to a commuter pass used for next request
 	private List<CommuterPassDetail> convertCommuterPass(List<Route> routes) {
 		List<CommuterPassDetail> cpDetails = routes.parallelStream()
 	            .map(route -> {
@@ -109,14 +120,14 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 	                cp.setGoal(summary.getGoal());
 
 	                Set<String> viaStations = route.getSections().parallelStream()
-	                        .filter(sc -> "point".equals(sc.getType()))
+	                        .filter(sc -> POINT.equals(sc.getType()))
 	                        .map(RouteSectionItem::getName)
 	                        .filter(Objects::nonNull)
 	                        .collect(Collectors.toSet());
 	                cp.setViaStations(viaStations);
 
 	                List<SubRoute> subRoutes = route.getSections().parallelStream()
-	                        .filter(sc -> "move".equals(sc.getType()) && sc.getTransport() != null)
+	                        .filter(sc -> MOVE.equals(sc.getType()) && sc.getTransport() != null)
 	                        .map(sc -> {
 	                            SubRoute subRoute = new SubRoute();
 	                            subRoute.setLineColor(sc.getTransport().getLineColor());
