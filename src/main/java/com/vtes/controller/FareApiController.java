@@ -53,7 +53,7 @@ public class FareApiController {
 		Integer userId = getAuthenticatedUserId();
 
 		if(!fareService.isExistFare(userId,recordId))
-			throw new FareNotFoundException("Fare ID is not found");
+			throw new FareNotFoundException("Fare ID ["+recordId+"] is not found");
 		
 		fareService.deleteFareRecord(recordId);
 		return ResponseEntity.ok()

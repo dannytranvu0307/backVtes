@@ -75,7 +75,7 @@ public class UserController {
 	@PostMapping("/active")
 	public ResponseEntity<?> activeUser(@RequestBody UserActiveRequest userActiveRequest) {
 
-		return userService.activeUser(userActiveRequest.getToken());
+		return userService.activeUser(userActiveRequest.getVerifyCode());
 	}
 
 	@PostMapping("/emails")

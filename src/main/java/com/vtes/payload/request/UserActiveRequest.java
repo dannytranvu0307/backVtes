@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 public class UserActiveRequest {
 	@NotBlank
-	private String token;
+	private String verifyCode;
 }
