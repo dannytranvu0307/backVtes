@@ -2,13 +2,16 @@ package com.vtes.model;
 
 import java.text.ParseException;
 import java.util.Date;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vtes.entity.Fare;
 import com.vtes.entity.User;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +27,7 @@ public class FareDTO {
 	private Integer id;
 
 	@JsonIgnore
+	@NotNull
 	private Integer userId;
 
 	@NotBlank

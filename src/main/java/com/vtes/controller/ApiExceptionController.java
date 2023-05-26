@@ -107,14 +107,21 @@ public class ApiExceptionController {
 	@ExceptionHandler(MissingServletRequestParameterException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public ResponseData missingRequestParameterResponse(Exception ex) {
-		return ResponseData.builder().code("API_ER02").message(ex.getMessage()).type(ResponseType.ERROR).build();
+		return ResponseData.builder()
+				.code("API_ER02")
+				.message(ex.getMessage())
+				.type(ResponseType.ERROR)
+				.build();
 
 	}
 
 	@ExceptionHandler(FareNotFoundException.class)
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
 	public ResponseData fareNotFoundException(FareNotFoundException ex) {
-		return ResponseData.builder().code("API010_ER").message("Not found fare record").type(ResponseType.WARINING)
+		return ResponseData.builder()
+				.code("API010_ER")
+				.message("Not found fare record")
+				.type(ResponseType.WARINING)
 				.build();
 
 	}

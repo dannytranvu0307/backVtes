@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
 		if (!jwtUtils.validateJwtToken(token)) {
 			log.info("Verify code has expired : {}", token);
 
-			return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("XXXX")
+			return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("API_ER01")
 					.message("Verify code has expired").build());
 		}
 
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
 
 		log.info("User {} of account is active", user.getFullName());
 
-		return ResponseEntity.ok().body(ResponseData.builder().type(ResponseType.INFO).code("200")
+		return ResponseEntity.ok().body(ResponseData.builder().type(ResponseType.INFO).code("")
 				.message("Account verify successfully").build());
 
 	}
@@ -207,7 +207,7 @@ public class UserServiceImpl implements UserService {
 		if (!jwtUtils.validateJwtToken(tokenResetPassword)) {
 			log.info("Verify code has expired : {}", passwordResetRequest.getAuthToken());
 
-			return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("XXXX")
+			return ResponseEntity.badRequest().body(ResponseData.builder().type(ResponseType.ERROR).code("API_ER01")
 					.message("Verify code has expired").build());
 		}
 

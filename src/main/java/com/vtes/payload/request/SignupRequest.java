@@ -11,11 +11,12 @@ public class SignupRequest {
 	private String fullName;
 
 	@NotNull
-	@Size(min = 1, max = 3)
+	@Min(value = 1)
+	@Max(value = 999)
 	private int departmentId;
 
 	@NotBlank
-	@Size(min = 16, max = 128)
+
 	@Pattern(regexp = ".+@vti\\.com\\.vn$")
 	private String email;
 

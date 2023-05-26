@@ -1,5 +1,7 @@
 package com.vtes.controller;
 
+import javax.validation.Valid;
+
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vtes.entity.User;
@@ -21,8 +22,8 @@ import com.vtes.payload.request.PasswordResetRequest;
 import com.vtes.payload.request.UpdateInfoRequest;
 import com.vtes.payload.request.UserActiveRequest;
 import com.vtes.payload.response.ResponseData;
-import com.vtes.payload.response.UserResponse;
 import com.vtes.payload.response.ResponseData.ResponseType;
+import com.vtes.payload.response.UserResponse;
 import com.vtes.repository.DepartmentRepository;
 import com.vtes.repository.UserRepository;
 import com.vtes.sercurity.services.UserDetailsImpl;
@@ -67,7 +68,7 @@ public class UserController {
 	}
 
 	@PostMapping("/active")
-	public ResponseEntity<?> activeUser(@RequestBody UserActiveRequest userActiveRequest) {
+	public ResponseEntity<?> activeUser(@Valid @RequestBody UserActiveRequest userActiveRequest) {
 
 		return userService.activeUser(userActiveRequest.getVerifyCode());
 	}
@@ -81,13 +82,13 @@ public class UserController {
 	}
 
 	@PostMapping("/reset-password")
-	public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest passwordResetRequest) {
+	public ResponseEntity<?> resetPassword(@Valid @RequestBody PasswordResetRequest passwordResetRequest) {
 		return userService.resetPassword(passwordResetRequest);
 
 	}
 
 	@PutMapping()
-	public ResponseEntity<?> updateUser(@RequestBody UpdateInfoRequest updateInfoRequest) {
+	public ResponseEntity<?> updateUser(@Valid @RequestBody UpdateInfoRequest updateInfoRequest) {
 		UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
 				.getPrincipal();
 
