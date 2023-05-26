@@ -1,7 +1,7 @@
 version: '3.8'
 services:
-  mysql-service:
-    image: mysql:8.0.32
+  mysql:
+    image: mysql:8.0.33
     container_name: vtes-mysql
     ports:
       - 3307:3306
@@ -9,26 +9,25 @@ services:
       - MYSQL_ROOT_PASSWORD=AdminDef
       - MYSQL_DATABASE=vtes
     volumes:
-      - ./vtesdb:/docker-entrypoint-initdb.d:rw
+      - ./vtesdb:/docker-entrypoint-initdb.d:ro
       - mysql-vtes-data:/var/lib/mysql
       - mysql-config:/etc/mysql/conf.d
     networks:
       - backend
-  app-service:
+  app:
     build: .
     container_name: vtes-backend
     restart: always
     depends_on:
-      - mysql-service
+      - mysql
     ports:
       - 8080:8080
     networks:
       - backend
 networks:
-  backend: {}
+  backend:
+    driver: bridge
 volumes:
   mysql-vtes-data:
   mysql-config:
   vtesdb:
-
-
