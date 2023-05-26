@@ -3,6 +3,7 @@ package com.vtes.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -13,6 +14,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 
 @Configuration
+@EnableAsync
 public class AmazonS3Config {
 
     @Value("${aws.access.key.id}")

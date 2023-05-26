@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,12 @@ import com.vtes.service.TransportInfomationServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
+/*
+ * Author : Chien@vti
+ * Date : 2023/05/20
+ * - Receive requests and return results to users when looking up routes, station details and ticket
+ * */
+
 @RestController
 @RequestMapping("/api/v1")
 @Slf4j
@@ -49,28 +56,26 @@ public class TransportAPIController {
 			@RequestParam(name = "commuterPass", required = false) boolean cpActive)
 			throws ParameterInvalidException, CommuterPassNotFound {
 
-		List<Route> routes = null;
 		Map<String, Object> params = new HashMap<>();
 		params.put("start", start);
 		params.put("goal", goal);
 		params.put("via", viaNodeJson(via));
 
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-		Integer userId = userDetails.getId();
+		Integer userId = getAuthenticatedUserId();
+		/*Handling the case of using commuter pass:
+		*getcommuter pass information from DB and set to params
+		**/
 		if (cpActive) {
-				if(!repo.findByUserId(userId).isPresent()) {
-					log.warn("Not found commuter pass with user id {}", userId);
-					throw new CommuterPassNotFound(userId);
-				}
-				CommuterPass commuterPass = repo.findByUserId(userId).get();
-
-				params.put("commuter_pass", commuterPass.getViaDetail());
-				routes = transportService.searchRoutes(params);
-
-		} else {
-			routes = transportService.searchRoutes(params);
+			Optional<CommuterPass> commuterPassOptional = repo.findByUserId(userId);
+			if (!commuterPassOptional.isPresent()) {
+				log.warn("Not found commuter pass with user id {}", userId);
+				throw new CommuterPassNotFound(userId);
+			}
+			CommuterPass commuterPass = commuterPassOptional.get();
+			params.put("commuter_pass", commuterPass.getViaDetail());
 		}
+
+		List<Route> routes = transportService.searchRoutes(params);
 
 		return ResponseEntity.ok()
 				.body(ResponseData.builder().code("").message("Success").type(ResponseType.INFO).data(routes).build());
@@ -81,8 +86,12 @@ public class TransportAPIController {
 	public ResponseEntity<?> getStationsByWord(@RequestParam(name = "stationName", required = true) String word)
 			throws ParameterInvalidException {
 		List<Station> stations = transportService.searchStationsByWord(word);
-		return ResponseEntity.ok().body(
-				ResponseData.builder().code("").message("Success").type(ResponseType.INFO).data(stations).build());
+		return ResponseEntity.ok().body(ResponseData.builder()
+										.code("")
+										.message("Success")
+										.type(ResponseType.INFO)
+										.data(stations)
+										.build());
 	}
 
 	@GetMapping("/cp-routes")
@@ -95,11 +104,23 @@ public class TransportAPIController {
 
 		List<CommuterPassDetail> cpRoutes = transportService.searchCommuterPassDetail(params);
 
-		return ResponseEntity.ok().body(
-				ResponseData.builder().code("").message("Success").type(ResponseType.INFO).data(cpRoutes).build());
+		return ResponseEntity.ok().body(ResponseData.builder()
+									.code("")
+									.message("Success")
+									.type(ResponseType.INFO)
+									.data(cpRoutes)
+									.build());
 
 	}
 
+	
+	private Integer getAuthenticatedUserId() {
+		// Get authenticated user from security context
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+		return userDetails.getId();
+	}
+	
 	private String viaNodeJson(String[] vias) {
 		if (vias == null)
 			return null;
