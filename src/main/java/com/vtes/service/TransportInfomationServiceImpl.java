@@ -45,6 +45,7 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 	private static final String DATE_FORMAT ="yyyy-MM-dd'T'HH:mm:ss";
 	private static final String POINT ="point";
 	private static final String MOVE ="move";
+	private static final Integer RESULT_LIMIT =100;
 	
 	@Autowired
 	private TotalNaviApiConnect totalnavi;
@@ -79,11 +80,11 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 	}
 
 	//Call the api to a 3rd party and filter out the points that are train stations
-	public List<Station> searchStationsByWord(String word) {
+	public List<Station> searchStationsByWord(Map<String, Object> params) {
 
 		List<Station> responseData = null;
-
-		String jsonString = transport.getStationDetail(word).getBody();
+		params.put("limit",RESULT_LIMIT);
+		String jsonString = transport.getStationDetail(params).getBody();
 
 		try {
 			JsonNode node = objectMapper.readTree(jsonString);

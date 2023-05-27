@@ -1,5 +1,7 @@
 package com.vtes.service;
 
+import java.util.Map;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,5 +21,5 @@ import com.vtes.config.FeignClientConfig;
 @FeignClient(name ="navitime-transport",url="https://navitime-transport.p.rapidapi.com", configuration = FeignClientConfig.class)
 public interface TransportApiConnect {
 	@GetMapping("/transport_node")
-	public ResponseEntity<String> getStationDetail(@RequestParam(name ="word") String word);
+	public ResponseEntity<String> getStationDetail(@RequestParam Map<String, Object> params);
 }
