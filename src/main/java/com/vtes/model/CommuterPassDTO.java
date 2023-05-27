@@ -17,7 +17,6 @@ public class CommuterPassDTO {
 
 	private String departure;
 	private String destination;
-	private List<String> via;
-	private List<String> viaDetail;
+	private List<String> viaDetails;
 
 }
