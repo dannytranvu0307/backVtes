@@ -27,7 +27,6 @@ public class FareDTO {
 	private Integer id;
 
 	@JsonIgnore
-	@NotNull
 	private Integer userId;
 
 	@NotBlank

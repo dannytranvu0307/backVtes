@@ -89,18 +89,18 @@ public class UserServiceImpl implements UserService {
 
 		Department department = getDepartmentById(updateInfoRequest.getDepartmentId());
 
-		if (updateInfoRequest.getPassword() == null) {
+		if (updateInfoRequest.getNewPassword() == null) {
 			updateUserInfoWithoutPassword(user, department, updateInfoRequest.getFullName());
 		} else {
-			if (!isPasswordValid(updateInfoRequest.getPassword(), user.getPassword())) {
+			if (!isPasswordValid(updateInfoRequest.getOldPassword(), user.getPassword()) && updateInfoRequest.getOldPassword() != null) {
 
 				log.info("{} of entered password not match", user.getFullName());
 
 				return ResponseEntity.ok().body(
-						ResponseData.builder().type(ResponseType.INFO).code("").message("Update successfull").build());
+						ResponseData.builder().type(ResponseType.ERROR).code("").message("Old password is not match").build());
 			}
 
-			updateUserPassword(user, updateInfoRequest.getPassword());
+			updateUserPassword(user, updateInfoRequest.getNewPassword());
 		}
 
 		updateCommuterPass(user, userDetailsImpl.getId(), updateInfoRequest.getCommuterPass());

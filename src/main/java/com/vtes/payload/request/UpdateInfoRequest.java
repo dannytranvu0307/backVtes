@@ -16,11 +16,11 @@ public class UpdateInfoRequest {
 	private String fullName;
 
 	@Size(min = 8, max = 64)
-	private String password;
+	private String oldPassword;
 
 	@Size(min = 8, max = 64)
 	private String newPassword;
-	
+
 	@NotNull
 	@Min(value = 1)
 	@Max(value = 999)
