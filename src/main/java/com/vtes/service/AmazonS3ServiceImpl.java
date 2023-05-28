@@ -27,7 +27,7 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
 	private AmazonS3 amazonS3;
 
 	@Override
-	public PutObjectResult upload(String path, String fileName, Optional<Map<String, String>> optionalMetaData,
+	public PutObjectResult upload(String bucketName, String fileName, Optional<Map<String, String>> optionalMetaData,
 			InputStream inputStream) {
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		optionalMetaData.ifPresent(map -> {
@@ -35,11 +35,11 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
 				map.forEach(objectMetadata::addUserMetadata);
 			}
 		});
-		log.debug("Path: " + path + ", FileName:" + fileName);
-		return amazonS3.putObject(path, fileName, inputStream, objectMetadata);
+		log.debug("Path: " + bucketName + ", FileName:" + fileName);
+		return amazonS3.putObject(bucketName, fileName, inputStream, objectMetadata);
 	}
 
-	public S3Object download(String path, String fileName) {
-		return amazonS3.getObject(path, fileName);
+	public S3Object download(String bucketName, String fileName) {
+		return amazonS3.getObject(bucketName, fileName);
 	}
 }

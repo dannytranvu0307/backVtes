@@ -10,8 +10,6 @@ import java.util.UUID;
 
 import javax.persistence.EntityNotFoundException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -45,18 +43,17 @@ public class FileDataService {
 	@Value("${aws.s3.bucket.name}")
 	private String bucketName;
 
-	@Async
 	public void uploadFileToS3(Integer userId, MultipartFile file) throws IOException, UploadFileException {
 
 		Map<String, String> metadata = new HashMap<>();
 		metadata.put("Content-Type", file.getContentType());
 		metadata.put("Content-Length", String.valueOf(file.getSize()));
 
-		String path = String.format("%s/%s", bucketName, UUID.randomUUID());
 		String fileName = String.format("%s", file.getOriginalFilename());
+		String fileNameOnS3 = String.format("%s-%s", UUID.randomUUID(),fileName);
 
 		// Uploading file to s3
-		PutObjectResult putObjectResult = amazonS3ServiceImpl.upload(path, fileName, Optional.of(metadata),
+		PutObjectResult putObjectResult = amazonS3ServiceImpl.upload(bucketName, fileNameOnS3, Optional.of(metadata),
 				file.getInputStream());
 		
 		if(putObjectResult != null){
@@ -65,7 +62,7 @@ public class FileDataService {
 			
 			log.info("{} fare detail deleted.",userId);
 			// Saving metadata to db
-			fileDataRepo.save((new FileData(new User(userId), fileName, path, new Date())));
+			fileDataRepo.save((new FileData(new User(userId), fileName, fileNameOnS3, new Date())));
 		
 		}else {
 			log.debug("Can not upload file with user {}",userId);
@@ -76,22 +73,23 @@ public class FileDataService {
 
 	}
 
-	@Async
+	
 	public byte[] download(Integer id, Integer userId) {
 		FileData fileMeta = fileDataRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("File not found"));
-		S3Object s3Object = amazonS3ServiceImpl.download(fileMeta.getFilePath(), fileMeta.getFileName());
-		log.info("Downloading an object with key= " + fileMeta.getFileName());
+		S3Object s3Object = amazonS3ServiceImpl.download(bucketName, fileMeta.getFilePath());
+		
+		log.info("Downloading an object with key= " + fileMeta.getFilePath());
 
 		byte[] content = null;
 		final S3ObjectInputStream stream = s3Object.getObjectContent();
 		try {
 			content = IOUtils.toByteArray(stream);
-			log.info("User {} is downloaded file {}successfully.", userId,id);
 			s3Object.close();
 		} catch (final IOException ex) {
 			log.debug("{} download file failed",userId);
 			log.debug("IO Error Message= " + ex.getMessage());
 		}
+		log.info("User {} is downloaded file {} successfully.", userId,id);
 		return content;
 	}
 
