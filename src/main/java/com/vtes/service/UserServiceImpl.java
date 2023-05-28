@@ -89,9 +89,7 @@ public class UserServiceImpl implements UserService {
 
 		Department department = getDepartmentById(updateInfoRequest.getDepartmentId());
 
-		if (updateInfoRequest.getNewPassword() == null) {
-			updateUserInfoWithoutPassword(user, department, updateInfoRequest.getFullName());
-		} else {
+		if (updateInfoRequest.getNewPassword() != null) {
 			if (!isPasswordValid(updateInfoRequest.getOldPassword(), user.getPassword()) && updateInfoRequest.getOldPassword() != null) {
 
 				log.info("{} of entered password not match", user.getFullName());
@@ -133,11 +131,6 @@ public class UserServiceImpl implements UserService {
 
 	private boolean isPasswordValid(String password, String encodedPassword) {
 		return encoder.matches(password, encodedPassword);
-	}
-
-	private void updateUserInfoWithoutPassword(User user, Department department, String fullName) {
-		user.setDepartment(department);
-		user.setFullName(fullName);
 	}
 
 	private void updateUserPassword(User user, String password) {
