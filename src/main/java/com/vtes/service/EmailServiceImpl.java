@@ -30,7 +30,7 @@ public class EmailServiceImpl implements EmailService {
 
 		SimpleMailMessage message = new SimpleMailMessage();
 		
-		String confirmationUrl = frontEndURL+"/verify?verifyCode="+ token;
+		String confirmationUrl = frontEndURL+"/verify/"+ token;
 		message.setTo(email);
 		message.setSubject("【重要】アカウント登録の完了とアクティベーション手続きのご案内");
 		message.setText("本メールは、アカウント登録の完了をお知らせするためにお送りしています。ご登録いただいた情報に基づき、アカウントを有効化していただく必要があります。\n\n"
@@ -48,7 +48,7 @@ public class EmailServiceImpl implements EmailService {
 	public void sendResetPasswordViaEmail(String email, String token) {
 		SimpleMailMessage message = new SimpleMailMessage();
 		User user = userRepository.findByEmail(email).get();
-		String confirmationUrl = frontEndURL+"/confirmresetpassword?authToken="+ token;
+		String confirmationUrl = frontEndURL+"/confirmresetpassword/"+ token;
 		message.setTo(email);
 		message.setSubject("パスワード再設定手続きのご案内");
 		message.setText(user.getFullName() + "様、\n\n" + "パスワードをリセットするためのリクエストがありました。下のリンクをクリックしてパスワードをリセットしてください。\n\n"
