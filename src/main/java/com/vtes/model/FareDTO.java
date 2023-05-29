@@ -56,11 +56,24 @@ public class FareDTO {
 	@NotNull
 	@JsonFormat(pattern = "yyyy/MM/dd")
 	private Date visitDate;
+	
+	@NotNull
+	@JsonIgnore
+	private boolean deleteFlag = false;
 
 	public Fare convertToFare() throws ParseException {
-		return Fare.builder().id(id).user(new User(userId)).departure(departure).visitLocation(visitLocation)
-				.destination(destination).fee(fee).payMethod(payMethod).useCommuterPass(useCommuterPass)
-				.isRoundTrip(isRoundTrip).transportation(transportation).visitDate(visitDate).build();
+		return Fare.builder().id(id)
+				.user(new User(userId))
+				.departure(departure)
+				.visitLocation(visitLocation)
+				.destination(destination)
+				.fee(fee).payMethod(payMethod)
+				.useCommuterPass(useCommuterPass)
+				.isRoundTrip(isRoundTrip)
+				.transportation(transportation)
+				.visitDate(visitDate)
+				.deleteFlag(deleteFlag)
+				.build();
 	}
 
 }
