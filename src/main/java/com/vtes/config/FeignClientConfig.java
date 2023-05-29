@@ -3,6 +3,7 @@ package com.vtes.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.vtes.exception.AccessKeyExpiredException;
 import com.vtes.exception.BadRequestException;
 
 import feign.RequestInterceptor;
@@ -38,7 +39,7 @@ public class FeignClientConfig {
 	}
 
 	// Interceptor for adding the API key to the request header
-	private static class FeignClientInterceptor implements RequestInterceptor {
+	public static class FeignClientInterceptor implements RequestInterceptor {
 
 		private final RapidAPIAccessKeyManager accessKeyManager;
 
@@ -53,11 +54,14 @@ public class FeignClientConfig {
 		}
 	}
 
-	// Error decoder for handling API response errors and rotate access key when current key expired
-	private static class NavitimeErrorDecoder implements ErrorDecoder {
+	// Error decoder for handling API response errors and rotate access key when
+	// current key expired
+	public static class NavitimeErrorDecoder implements ErrorDecoder {
 
-		private final RapidAPIAccessKeyManager accessKeyManager;
+		public final RapidAPIAccessKeyManager accessKeyManager;
 		private static final Integer TOO_MANY_REQUEST = 429;
+		private static final Integer BAD_REQUEST = 400;
+		private static final Integer OK = 200;
 
 		public NavitimeErrorDecoder(RapidAPIAccessKeyManager accessKeyManager) {
 			this.accessKeyManager = accessKeyManager;
@@ -66,16 +70,16 @@ public class FeignClientConfig {
 		@Override
 		public Exception decode(String methodKey, Response response) {
 			if (response.status() == TOO_MANY_REQUEST) {
-				log.error("Too many requests");
+				String currentKey = accessKeyManager.getCurrentAccessKey();
 				accessKeyManager.rotateAccesskey();
-				log.debug("Access key has changed. Current key is {}", accessKeyManager.getCurrentAccessKey());
+				return new AccessKeyExpiredException(currentKey);
 			}
 
-			if (response.status() == 400) {
+			if (response.status() == BAD_REQUEST) {
 				return new BadRequestException("Bad Request");
 			}
 
-			if (response.status() != 200) {
+			if (response.status() != OK) {
 				return new Exception("Error occurred while calling 3rd-party API.");
 			}
 
