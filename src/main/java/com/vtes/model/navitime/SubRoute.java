@@ -12,5 +12,6 @@ import lombok.Data;
 public class SubRoute {
 	private String lineSymbol;
 	private String lineColor;
+	private String lineName;
 	private List<String> links;
 }

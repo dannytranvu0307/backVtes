@@ -132,7 +132,7 @@ public class TransportInfomationServiceImpl implements TransportInfomationServic
 	                        .map(sc -> {
 	                            SubRoute subRoute = new SubRoute();
 	                            subRoute.setLineColor(sc.getTransport().getLineColor());
-
+	                            subRoute.setLineName(sc.getTransport().getName());
 	                            List<String> linkJson = Optional.ofNullable(sc.getTransport().getLinks())
 	                                    .map(links -> links.parallelStream()
 	                                            .map(Link::generateViaJson)
