@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vtes.entity.CommuterPass;
 import com.vtes.exception.CommuterPassNotFound;
 import com.vtes.exception.ParameterInvalidException;
-import com.vtes.model.navitime.CommuterPassDetail;
+import com.vtes.model.navitime.CommuterPassRoute;
 import com.vtes.model.navitime.Node;
 import com.vtes.model.navitime.Route;
 import com.vtes.model.navitime.Station;
@@ -105,7 +105,7 @@ public class TransportAPIController {
 		params.put("start", start);
 		params.put("goal", goal);
 
-		List<CommuterPassDetail> cpRoutes = transportService.searchCommuterPassDetail(params);
+		List<CommuterPassRoute> cpRoutes = transportService.searchCommuterPassDetail(params);
 
 		return ResponseEntity.ok().body(ResponseData.builder()
 									.code("")
