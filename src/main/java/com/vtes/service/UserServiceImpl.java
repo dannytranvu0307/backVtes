@@ -35,6 +35,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private DepartmentRepository departmentRepository;
+	
+	@Autowired
+	private FareService fareService;
 
 	@Autowired
 	private CommuterPassRepo commuterPassRepo;
@@ -152,7 +155,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUser(String email) {
-		return userRepository.findByEmail(email).get();
+		User user = userRepository.findByEmail(email).get();
+		user.setFares(fareService.finByUserId(user.getId()));
+		return user;
 	}
 
 	@Override

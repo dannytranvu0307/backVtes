@@ -32,8 +32,8 @@ public class FareService {
 		repo.deleteByUserId(userId);
 	}
 	
-	public List<Fare> findAll() {
-		return repo.findAll();
+	public List<Fare> finByUserId(Integer userId) {
+		return repo.finByUserId(userId);
 	}
 
 	public boolean isExistFare(Integer userId,Integer recordId) {

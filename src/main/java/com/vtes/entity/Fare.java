@@ -69,7 +69,7 @@ public class Fare {
 	private Date createDate;
 
 	@Column(name = "DELETE_FLAG")
-	private Boolean deleteFlag;
+	private Boolean deleteFlag = false;
 
 	public Fare(Integer id) {
 		super();
