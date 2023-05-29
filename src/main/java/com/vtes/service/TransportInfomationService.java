@@ -3,7 +3,7 @@ package com.vtes.service;
 import java.util.List;
 import java.util.Map;
 
-import com.vtes.model.navitime.CommuterPassDetail;
+import com.vtes.model.navitime.CommuterPassRoute;
 import com.vtes.model.navitime.Route;
 import com.vtes.model.navitime.Station;
 /*
@@ -17,7 +17,7 @@ public interface TransportInfomationService {
 	
 	public List<Station> searchStationsByWord(Map<String, Object> params);
 	
-	public List<CommuterPassDetail> searchCommuterPassDetail(Map<String, Object> params);
+	public List<CommuterPassRoute> searchCommuterPassDetail(Map<String, Object> params);
 
 
 }
