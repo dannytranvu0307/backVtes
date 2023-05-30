@@ -34,8 +34,18 @@ CREATE TABLE `tbl_commuter_pass` (
   PRIMARY KEY (`ID`),
   KEY `tbl_commuter_pass_ibfk_1` (`USER_ID`),
   CONSTRAINT `tbl_commuter_pass_ibfk_1` FOREIGN KEY (`USER_ID`) REFERENCES `tbl_user` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tbl_commuter_pass`
+--
+
+LOCK TABLES `tbl_commuter_pass` WRITE;
+/*!40000 ALTER TABLE `tbl_commuter_pass` DISABLE KEYS */;
+INSERT INTO `tbl_commuter_pass` VALUES (2,4,'上井草sdf','西武新宿','[{\"goal\":\"00004927\",\"start\":\"00003913\",\"link\":\"00000721\",\"direction\":\"up\"}]','2023-05-23 08:28:14','2023-05-25 05:57:59',NULL);
+/*!40000 ALTER TABLE `tbl_commuter_pass` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -46,4 +56,4 @@ CREATE TABLE `tbl_commuter_pass` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-30 10:29:22
+-- Dump completed on 2023-05-25 16:50:50

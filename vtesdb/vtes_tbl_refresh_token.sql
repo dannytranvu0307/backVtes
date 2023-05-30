@@ -33,8 +33,18 @@ CREATE TABLE `tbl_refresh_token` (
   PRIMARY KEY (`ID`),
   KEY `tbl_refresh_token_ibfk_1` (`USER_ID`),
   CONSTRAINT `tbl_refresh_token_ibfk_1` FOREIGN KEY (`USER_ID`) REFERENCES `tbl_user` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tbl_refresh_token`
+--
+
+LOCK TABLES `tbl_refresh_token` WRITE;
+/*!40000 ALTER TABLE `tbl_refresh_token` DISABLE KEYS */;
+INSERT INTO `tbl_refresh_token` VALUES (1,3,'af23e45e-f6a8-4726-85ab-7ebb96d84a13','2023-05-23 06:13:20','2023-05-25 07:45:07',NULL,0),(4,4,'31417344-2a00-4196-9fb1-7b215d5772f8','2023-05-25 06:07:48','2023-05-25 07:45:07',NULL,0);
+/*!40000 ALTER TABLE `tbl_refresh_token` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -45,4 +55,4 @@ CREATE TABLE `tbl_refresh_token` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-30 10:29:22
+-- Dump completed on 2023-05-25 16:50:50
