@@ -50,7 +50,7 @@ INSERT INTO `tbl_department` VALUES (9,'開発第三グループ','2023-05-23 02
 INSERT INTO `tbl_department` VALUES (10,'開発第四グループ','2023-05-23 02:11:56',NULL,NULL);												
 INSERT INTO `tbl_department` VALUES (11,'開発第五グループ','2023-05-23 02:11:56',NULL,NULL);												
 INSERT INTO `tbl_department` VALUES (12,'開発第六グループ','2023-05-23 02:11:56',NULL,NULL);												
-INSERT INTO `tbl_department` VALUES (13'マーケティング部','2023-05-23 02:11:56',NULL,NULL);												
+INSERT INTO `tbl_department` VALUES (13,'マーケティング部','2023-05-23 02:11:56',NULL,NULL);												
 INSERT INTO `tbl_department` VALUES (14,'総務部','2023-05-23 02:11:56',NULL,NULL);												
 INSERT INTO `tbl_department` VALUES (15,'人事部','2023-05-23 02:11:56',NULL,NULL);												
 INSERT INTO `tbl_department` VALUES (16,'採用','2023-05-23 02:11:56',NULL,NULL);												
