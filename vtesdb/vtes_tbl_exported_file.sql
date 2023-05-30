@@ -34,7 +34,7 @@ CREATE TABLE `tbl_exported_file` (
   PRIMARY KEY (`ID`),
   KEY `tbl_exported_history_ibfk_1` (`USER_ID`),
   CONSTRAINT `tbl_exported_file_ibfk_1` FOREIGN KEY (`USER_ID`) REFERENCES `tbl_user` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,7 +43,6 @@ CREATE TABLE `tbl_exported_file` (
 
 LOCK TABLES `tbl_exported_file` WRITE;
 /*!40000 ALTER TABLE `tbl_exported_file` DISABLE KEYS */;
-INSERT INTO `tbl_exported_file` VALUES (1,4,'VTIジャパン株式会社_VTES_要件定義書.xlsx','vtes-exported-files/36fbaff5-b94a-4e7c-a0d2-49002cee9f6a','2023-05-24 06:33:55','2023-05-24 06:33:54','2023-05-24 06:33:54',0);
 /*!40000 ALTER TABLE `tbl_exported_file` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -56,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-25 16:50:50
+-- Dump completed on 2023-05-30 11:42:30

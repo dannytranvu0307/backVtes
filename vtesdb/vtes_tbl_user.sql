@@ -34,13 +34,12 @@ CREATE TABLE `tbl_user` (
   `UPDATE_DT` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `DELETE_FLAG` tinyint DEFAULT '0',
   PRIMARY KEY (`ID`),
-  UNIQUE KEY `FULL_NAME` (`FULL_NAME`),
   UNIQUE KEY `EMAIL` (`EMAIL`),
   KEY `fk_user_department_idx` (`DEPARTMENT_ID`),
   CONSTRAINT `fk_user_department` FOREIGN KEY (`DEPARTMENT_ID`) REFERENCES `tbl_department` (`ID`),
   CONSTRAINT `tbl_user_chk_1` CHECK (((length(`FULL_NAME`) >= 6) and (length(`FULL_NAME`) <= 64))),
   CONSTRAINT `tbl_user_chk_2` CHECK (((length(`EMAIL`) >= 6) and (length(`EMAIL`) <= 256)))
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -49,7 +48,7 @@ CREATE TABLE `tbl_user` (
 
 LOCK TABLES `tbl_user` WRITE;
 /*!40000 ALTER TABLE `tbl_user` DISABLE KEYS */;
-INSERT INTO `tbl_user` VALUES (3,'Chien tran','chient369@gmail.com','$2a$10$8ahv7pYdhD1SWf58NcvKZ.W9H17sneILut0GjjJpqQVOl78kvXo0y',1,'NULL',1,NULL,'2023-05-23 02:19:08',0),(4,'Vtes Admin115','admin@gmail.com','$2a$10$BX9s6vvEYcR4uUs0uTWYruGpkgDsqxMg83UBAh.xUB2QNf/GsmB7u',1,'3e09bc7f-2e71-4727-a5ef-02311463e9fa',1,NULL,'2023-05-23 06:55:20',0);
+INSERT INTO `tbl_user` VALUES (14,'Test Admin','test1234@vti.com.vn','$2a$10$BX9s6vvEYcR4uUs0uTWYruGpkgDsqxMg83UBAh.xUB2QNf/GsmB7u',2,NULL,1,'2023-05-30 02:42:17','2023-05-30 02:42:17',0);
 /*!40000 ALTER TABLE `tbl_user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -62,4 +61,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-25 16:50:50
+-- Dump completed on 2023-05-30 11:42:30
