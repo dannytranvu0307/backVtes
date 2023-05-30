@@ -15,7 +15,7 @@ public interface TransportInfomationService {
 	
 	public List<Route> searchRoutes(Map<String, Object> params);
 	
-	public List<Station> searchStationsByWord(Map<String, Object> params);
+	public List<Station> searchStationsByWord(String stationName);
 	
 	public List<CommuterPassRoute> searchCommuterPassDetail(Map<String, Object> params);
 

@@ -13,6 +13,7 @@ import lombok.Data;
 @Data
 public class UpdateInfoRequest {
 	@NotBlank
+	@Size(min = 4, max = 64)
 	private String fullName;
 
 	@Size(min = 8, max = 64)

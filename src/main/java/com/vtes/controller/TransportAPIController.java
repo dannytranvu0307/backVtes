@@ -85,10 +85,8 @@ public class TransportAPIController {
 	@GetMapping("/stations")
 	public ResponseEntity<?> getStationsByWord(@RequestParam(name = "stationName", required = true) String word)
 			throws ParameterInvalidException {
-		Map<String, Object> params = new HashMap<>();
-		params.put("word", word);
 		
-		List<Station> stations = transportService.searchStationsByWord(params);
+		List<Station> stations = transportService.searchStationsByWord(word);
 		return ResponseEntity.ok().body(ResponseData.builder()
 										.code("")
 										.message("Success")
