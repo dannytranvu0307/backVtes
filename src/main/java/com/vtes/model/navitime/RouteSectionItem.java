@@ -20,7 +20,7 @@ public class RouteSectionItem {
 	@Setter(onMethod_ = {@JsonSetter("node_id")})
 	private String nodeId;
 	
-	@Getter(onMethod_ = {@JsonGetter("StationName")})
+	@Getter(onMethod_ = {@JsonGetter("stationName")})
 	@Setter(onMethod_ = {@JsonSetter("name")})
 	private String name;
 	
