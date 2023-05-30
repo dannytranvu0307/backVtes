@@ -29,7 +29,7 @@ CREATE TABLE `tbl_department` (
   `UPDATE_DT` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `DELETE_FLAG` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +38,24 @@ CREATE TABLE `tbl_department` (
 
 LOCK TABLES `tbl_department` WRITE;
 /*!40000 ALTER TABLE `tbl_department` DISABLE KEYS */;
-INSERT INTO `tbl_department` VALUES (2,'開発部','2023-05-30 01:50:54',NULL,0),(3,'G1','2023-05-30 01:50:54',NULL,0),(4,'G2','2023-05-30 01:50:54',NULL,0),(5,'G3','2023-05-30 01:50:54',NULL,0),(6,'G4','2023-05-30 01:50:54',NULL,0),(7,'G5','2023-05-30 01:50:54',NULL,0),(8,'経理部','2023-05-30 01:50:54',NULL,0);
+INSERT INTO `tbl_department` VALUES (1,'BOD','2023-05-23 02:11:56',NULL,NULL);												
+INSERT INTO `tbl_department` VALUES (2,'営業第一部','2023-05-23 02:11:56',NULL,NULL);												
+INSERT INTO `tbl_department` VALUES (3,'営業第二部','2023-05-23 02:11:56',NULL,NULL);												
+INSERT INTO `tbl_department` VALUES (4,'営業第三部','2023-05-23 02:11:56',NULL,NULL);												
+INSERT INTO `tbl_department` VALUES (5,'大阪事業所','2023-05-23 02:11:56',NULL,NULL);												
+INSERT INTO `tbl_department` VALUES (6,'開発第ゼログループ','2023-05-23 02:11:56',NULL,NULL);												
+INSERT INTO `tbl_department` VALUES (7,'開発第一グループ','2023-05-23 02:11:56',NULL,NULL);												
+INSERT INTO `tbl_department` VALUES (8,'開発第二グループ','2023-05-23 02:11:56',NULL,NULL);												
+INSERT INTO `tbl_department` VALUES (9,'開発第三グループ','2023-05-23 02:11:56',NULL,NULL);												
+INSERT INTO `tbl_department` VALUES (10,'開発第四グループ','2023-05-23 02:11:56',NULL,NULL);												
+INSERT INTO `tbl_department` VALUES (11,'開発第五グループ','2023-05-23 02:11:56',NULL,NULL);												
+INSERT INTO `tbl_department` VALUES (12,'開発第六グループ','2023-05-23 02:11:56',NULL,NULL);												
+INSERT INTO `tbl_department` VALUES (13'マーケティング部','2023-05-23 02:11:56',NULL,NULL);												
+INSERT INTO `tbl_department` VALUES (14,'総務部','2023-05-23 02:11:56',NULL,NULL);												
+INSERT INTO `tbl_department` VALUES (15,'人事部','2023-05-23 02:11:56',NULL,NULL);												
+INSERT INTO `tbl_department` VALUES (16,'採用','2023-05-23 02:11:56',NULL,NULL);												
+INSERT INTO `tbl_department` VALUES (17,'経理・会計ー財務部','2023-05-23 02:11:56',NULL,NULL);
+
 /*!40000 ALTER TABLE `tbl_department` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +68,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-30 11:42:30
+-- Dump completed on 2023-05-25 16:50:50
