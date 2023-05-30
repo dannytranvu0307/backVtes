@@ -48,7 +48,7 @@ CREATE TABLE `tbl_user` (
 
 LOCK TABLES `tbl_user` WRITE;
 /*!40000 ALTER TABLE `tbl_user` DISABLE KEYS */;
-INSERT INTO `tbl_user` VALUES (14,'Test Admin','test1234@vti.com.vn','$2a$10$BX9s6vvEYcR4uUs0uTWYruGpkgDsqxMg83UBAh.xUB2QNf/GsmB7u',2,NULL,1,'2023-05-30 02:42:17','2023-05-30 02:42:17',0);
+INSERT INTO `tbl_user` VALUES (14,'Test Admin','test1234@vti.com.vn','$2a$10$i.ZOgCKPHvVt4sfUXxb7H.1A.9A/n0ewF0ifwgaHMltjkhffJufuq',2,NULL,1,'2023-05-30 02:42:17','2023-05-30 02:42:17',0);
 /*!40000 ALTER TABLE `tbl_user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
